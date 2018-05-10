@@ -4,6 +4,9 @@
 #include <ostream>
 #include <stdexcept>
 
+// Namespace
+namespace math {
+
 // Classe
 class Infini {
 	private:
@@ -46,3 +49,5 @@ class Infini {
 };
 
 static const Infini INFINI;
+
+} // math

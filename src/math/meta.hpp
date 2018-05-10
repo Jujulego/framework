@@ -4,6 +4,7 @@
 #include <type_traits>
 
 // Namespace
+namespace math {
 namespace meta {
 
 // Métafonctions
@@ -28,3 +29,4 @@ struct min<T, V1, V2> : std::conditional<(V1 > V2),
 >::type {};
 
 } // meta
+} // math

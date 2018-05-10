@@ -6,6 +6,9 @@
 #include "coord.hpp"
 #include "nombre.hpp"
 
+// Namespace
+namespace math {
+
 // Norme
 template<class Int, size_t DEG>
 auto norme(Vecteur<Int,DEG> const& vec) {
@@ -56,3 +59,5 @@ Vecteur<Int,3> vectoriel(Vecteur<Int,3> const& v1, Vecteur<Int,3> const& v2) {
 
 	return r;
 }
+
+} // math

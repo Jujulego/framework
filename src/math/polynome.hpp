@@ -1,4 +1,3 @@
-
 #pragma once
 
 // Importations
@@ -8,6 +7,9 @@
 #include <cstddef>
 #include <ostream>
 #include <type_traits>
+
+// Namespace
+namespace math {
 
 // Template
 template<class Int, size_t DEG>
@@ -257,43 +259,45 @@ typename std::enable_if<DEG2 <= DEG,Polynome<Int,DEG>&>::type Polynome<Int,DEG>:
 	return *this;
 }
 
+} // math
+
 // Opérateurs externes
 // - arithmétique
 template<class Int, size_t D1, size_t D2>
-typename std::enable_if<(D1 > D2),Polynome<Int,D1>>::type operator + (Polynome<Int,D1> const& p1, Polynome<Int,D2> const& p2) {
-	Polynome<Int,D1> r(p1);
+typename std::enable_if<(D1 > D2),math::Polynome<Int,D1>>::type operator + (math::Polynome<Int,D1> const& p1, math::Polynome<Int,D2> const& p2) {
+	math::Polynome<Int,D1> r(p1);
 	r += p2;
 
 	return r;
 }
 
 template<class Int, size_t D1, size_t D2>
-typename std::enable_if<(D1 <= D2),Polynome<Int,D2>>::type operator + (Polynome<Int,D1> const& p1, Polynome<Int,D2> const& p2) {
-	Polynome<Int,D2> r(p2);
+typename std::enable_if<(D1 <= D2),math::Polynome<Int,D2>>::type operator + (math::Polynome<Int,D1> const& p1, math::Polynome<Int,D2> const& p2) {
+	math::Polynome<Int,D2> r(p2);
 	r += p1;
 
 	return r;
 }
 
 template<class Int, size_t D1, size_t D2>
-typename std::enable_if<(D1 > D2),Polynome<Int,D1>>::type operator - (Polynome<Int,D1> const& p1, Polynome<Int,D2> const& p2) {
-	Polynome<Int,D1> r(p1);
+typename std::enable_if<(D1 > D2),math::Polynome<Int,D1>>::type operator - (math::Polynome<Int,D1> const& p1, math::Polynome<Int,D2> const& p2) {
+	math::Polynome<Int,D1> r(p1);
 	r -= p2;
 
 	return r;
 }
 
 template<class Int, size_t D1, size_t D2>
-typename std::enable_if<(D1 <= D2),Polynome<Int,D2>>::type operator - (Polynome<Int,D1> const& p1, Polynome<Int,D2> const& p2) {
-	Polynome<Int,D2> r(p2);
+typename std::enable_if<(D1 <= D2),math::Polynome<Int,D2>>::type operator - (math::Polynome<Int,D1> const& p1, math::Polynome<Int,D2> const& p2) {
+	math::Polynome<Int,D2> r(p2);
 	r -= p1;
 
 	return r;
 }
 
 template<class Int, size_t D1, size_t D2>
-Polynome<Int,D1+D2> operator * (Polynome<Int,D1> const& p1, Polynome<Int,D2> const& p2) {
-	Polynome<Int,D1+D2> r;
+math::Polynome<Int,D1+D2> operator * (math::Polynome<Int,D1> const& p1, math::Polynome<Int,D2> const& p2) {
+	math::Polynome<Int,D1+D2> r;
 
 	for (size_t i = 0; i <= D1; ++i) {
 		for (size_t j = 0; j <= D2; ++j) {
@@ -305,16 +309,16 @@ Polynome<Int,D1+D2> operator * (Polynome<Int,D1> const& p1, Polynome<Int,D2> con
 }
 
 template<class Int, size_t D1, size_t D2>
-typename std::enable_if<D2 < D1,Polynome<Int,D1-D2>>::type operator / (Polynome<Int,D1> n, Polynome<Int,D2> const& p) {
+typename std::enable_if<D2 < D1,math::Polynome<Int,D1-D2>>::type operator / (math::Polynome<Int,D1> n, math::Polynome<Int,D2> const& p) {
 	// Initialisation quotient
-	Polynome<Int,D1-D2> q;
+	math::Polynome<Int,D1-D2> q;
 
 	// Calcul !
 	while (n.degres() >= p.degres()) {
 		// Décalage du diviseur
 		size_t deg = n.degres();
 		size_t decal = deg - p.degres();
-		Polynome<Int,D1> d = shift_right<D1-D2>(p, decal);
+		math::Polynome<Int,D1> d = math::shift_right<D1-D2>(p, decal);
 
 		// Division
 		q[decal] = n[deg] / d[deg];
@@ -326,13 +330,13 @@ typename std::enable_if<D2 < D1,Polynome<Int,D1-D2>>::type operator / (Polynome<
 }
 
 template<class Int, size_t D1, size_t D2>
-typename std::enable_if<D2 < D1,Polynome<Int,D1>>::type operator % (Polynome<Int,D1> n, Polynome<Int,D2> const& p) {
+typename std::enable_if<D2 < D1,math::Polynome<Int,D1>>::type operator % (math::Polynome<Int,D1> n, math::Polynome<Int,D2> const& p) {
 	// Calcul !
 	while (n.degres() >= p.degres()) {
 		// Décalage du diviseur
 		size_t deg = n.degres();
 		size_t decal = deg - p.degres();
-		Polynome<Int,D1> d = shift_right<D1-D2>(p, decal);
+		math::Polynome<Int,D1> d = math::shift_right<D1-D2>(p, decal);
 
 		// Division
 		d *= n[deg] / d[deg];
@@ -344,7 +348,7 @@ typename std::enable_if<D2 < D1,Polynome<Int,D1>>::type operator % (Polynome<Int
 
 // - affichage
 template<class Int, size_t DEG>
-std::ostream& operator << (std::ostream& stream, Polynome<Int,DEG> const& p) {
+std::ostream& operator << (std::ostream& stream, math::Polynome<Int,DEG> const& p) {
 	// Cas du polynome nul
 	if (!p) {
 		return stream << "0";

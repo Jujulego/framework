@@ -3,6 +3,9 @@
 
 #include "infini.hpp"
 
+// Namespace
+using namespace math;
+
 // Opérateurs
 // - cast
 Infini::operator bool () const {

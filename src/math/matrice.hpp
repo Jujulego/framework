@@ -9,6 +9,9 @@
 
 #include "coord.hpp"
 
+// Namespace
+namespace math {
+
 // Classe
 template<class Int, size_t LIG, size_t COL = LIG> // Matrice carrée par défaut
 class Matrice {                                   // Matrice<Int,0,0> => matrice dynamique (vecteur) taille déterminée à l'execution
@@ -890,18 +893,20 @@ class Matrice<Int,0,0> {
 		std::vector<Int> m_matrice;
 };
 
+} // math
+
 // Opérateurs externes
 // produit matriciel
 template<class Int, size_t LIG, size_t COLLIG, size_t COL>
-typename std::enable_if<LIG != 0 && COLLIG != 0 && COL != 0,Matrice<Int,LIG,COL>>::type operator * (Matrice<Int,LIG,COLLIG> const& m1, Matrice<Int,COLLIG,COL> const& m2) {
-	Matrice<Int,LIG,COL> r;
+typename std::enable_if<LIG != 0 && COLLIG != 0 && COL != 0,math::Matrice<Int,LIG,COL>>::type operator * (math::Matrice<Int,LIG,COLLIG> const& m1, math::Matrice<Int,COLLIG,COL> const& m2) {
+	math::Matrice<Int,LIG,COL> r;
 
 	for (size_t l = 0; l < LIG; ++l) {
 		for (size_t c = 0; c < COL; ++c) {
-			r[{l, c}] = 0;
+			r[math::Point<size_t,2>({l, c})] = 0;
 
 			for (size_t i = 0; i < COLLIG; ++i) {
-				r[{l, c}] += m1[{l, i}] * m2[{i, c}];
+				r[math::Point<size_t,2>({l, c})] += m1[math::Point<size_t,2>({l, i})] * m2[math::Point<size_t,2>({i, c})];
 			}
 		}
 	}
@@ -910,19 +915,19 @@ typename std::enable_if<LIG != 0 && COLLIG != 0 && COL != 0,Matrice<Int,LIG,COL>
 }
 
 template<class Int, size_t LIG, size_t COL>
-typename std::enable_if<LIG != 0 && COL != 0,Matrice<Int,0,0>>::type operator * (Matrice<Int,LIG,COL> const& m1, Matrice<Int,0,0> const& m2) {
+typename std::enable_if<LIG != 0 && COL != 0,math::Matrice<Int,0,0>>::type operator * (math::Matrice<Int,LIG,COL> const& m1, math::Matrice<Int,0,0> const& m2) {
 	static_assert(LIG > 0, "Doit avoir un nombre non nul de lignes");
 	static_assert(COL > 0, "Doit avoir un nombre non nul de colonnes");
 
 	if (COL != m2.nb_lig()) throw std::domain_error("Pour le produit matriciel : C1 = L2");
-	Matrice<Int,0,0> r(LIG, m2.nb_col());
+	math::Matrice<Int,0,0> r(LIG, m2.nb_col());
 
 	for (size_t l = 0; l < LIG; ++l) {
 		for (size_t c = 0; c < m2.nb_col(); ++c) {
-			r[Point<size_t,2>({l, c})] = 0;
+			r[math::Point<size_t,2>({l, c})] = 0;
 
 			for (size_t i = 0; i < COL; ++i) {
-				r[Point<size_t,2>({l, c})] += m1[Point<size_t,2>({l, i})] * m2[Point<size_t,2>({i, c})];
+				r[math::Point<size_t,2>({l, c})] += m1[math::Point<size_t,2>({l, i})] * m2[math::Point<size_t,2>({i, c})];
 			}
 		}
 	}
@@ -931,7 +936,7 @@ typename std::enable_if<LIG != 0 && COL != 0,Matrice<Int,0,0>>::type operator * 
 }
 
 template<class Int, size_t LIG, size_t COL>
-Matrice<Int,0,0> operator * (Matrice<Int,0,0> m1, Matrice<Int,LIG,COL> const& m2) {
+math::Matrice<Int,0,0> operator * (math::Matrice<Int,0,0> m1, math::Matrice<Int,LIG,COL> const& m2) {
 	m1 *= m2;
 	return m1;
 }

@@ -7,6 +7,9 @@
 
 #include "infini.hpp"
 
+// Namespace
+namespace math {
+
 // Classe
 template<class Int, typename E = void>
 class Nombre {
@@ -536,29 +539,31 @@ class Nombre<Int,typename std::enable_if<std::is_integral<Int>::value>::type> {
 		}
 };
 
+} // math
+
 namespace std {
 
 // Numeric limits
 template<class Int>
-struct numeric_limits<Nombre<Int>> : numeric_limits<Int> {
+struct numeric_limits<math::Nombre<Int>> : numeric_limits<Int> {
 	// Propriétés
 	static constexpr bool is_specialized = true;
 
 	static constexpr bool has_infinity = true;
-	static constexpr Nombre<Int> infinity() { return Nombre<Int>(INFINI); }
+	static constexpr math::Nombre<Int> infinity() { return math::Nombre<Int>(math::INFINI); }
 };
 
 // Type traits
 template<class Int>
-struct is_floating_point<Nombre<Int>> : is_floating_point<Int> {};
+struct is_floating_point<math::Nombre<Int>> : is_floating_point<Int> {};
 
 template<class Int>
-struct is_integral<Nombre<Int>> : is_integral<Int> {};
+struct is_integral<math::Nombre<Int>> : is_integral<Int> {};
 
 template<class Int>
-struct is_signed<Nombre<Int>> : is_signed<Int> {};
+struct is_signed<math::Nombre<Int>> : is_signed<Int> {};
 
 template<class Int>
-struct is_unsigned<Nombre<Int>> : is_unsigned<Int> {};
+struct is_unsigned<math::Nombre<Int>> : is_unsigned<Int> {};
 
 } // std

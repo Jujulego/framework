@@ -5,6 +5,9 @@
 
 #include "coord.hpp"
 
+// Namespace
+namespace math {
+
 // Template
 template<class Int, size_t DEG>
 class Range {
@@ -44,12 +47,10 @@ class Range {
 				// - incrémentation & décrémentation
 				const_iterator& operator ++ () {
 					for (size_t d = DEG-1; d >= 0; --d) {
-//					for (size_t d = 0; d < DEG; ++d) {
 						++(m_point[d]);
 
 						if (m_point[d] >= m_range.m_fin[d]) {
 							if (d > 0) m_point[d] = m_range.m_debut[d];
-//							if (d < DEG-1) m_point[d] = m_range.m_debut[d];
 						} else {
 							break;
 						}
@@ -60,7 +61,6 @@ class Range {
 
 				const_iterator& operator -- () {
 					for (size_t d = DEG-1; d >= 0; --d) {
-//					for (size_t d = 0; d < DEG; ++d) {
 						--(m_point[d]);
 
 						if (m_point[d] < m_range.m_debut[d]) {
@@ -102,9 +102,6 @@ class Range {
 			for (size_t d = 1; d < DEG; ++d) fin[d] = m_debut[d];
 			fin[0] = m_fin[0];
 
-//			for (size_t d = 0; d < DEG-1; ++d) fin[d] = m_debut[d];
-//			fin[DEG-1] = m_fin[DEG-1];
-
 			return const_iterator(fin, *this);
 		}
 
@@ -132,3 +129,4 @@ Range<Int,DEG> range(Vecteur<Int,DEG> const& t) {
 	return range(debut, t);
 }
 
+} // math

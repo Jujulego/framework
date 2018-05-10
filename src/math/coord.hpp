@@ -9,6 +9,9 @@
 
 #include "nombre.hpp"
 
+// Namespace
+namespace math {
+
 // Classe
 template<class Int, size_t DEG, size_t PT>
 class Coord {
@@ -224,12 +227,14 @@ class Coord<Int,DEG,0> {
 		std::array<Int,DEG> m_coords;
 };
 
+} // math
+
 // Opérateurs externes
 // - arithmétique
 template<class Int, size_t DEG, size_t PT1, size_t PT2>
-Coord<Int,DEG,PT1+PT2> operator + (Coord<Int,DEG,PT1> const& c1, Coord<Int,DEG,PT2> const& c2) {
+math::Coord<Int,DEG,PT1+PT2> operator + (math::Coord<Int,DEG,PT1> const& c1, math::Coord<Int,DEG,PT2> const& c2) {
 	static_assert(PT1 + PT2, "Impossible d'ajouter un point à un point");
-	Coord<Int,DEG,PT1+PT2> r;
+	math::Coord<Int,DEG,PT1+PT2> r;
 
 	for (size_t i = 0; i < DEG; ++i) {
 		r[i] = c1[i] + c2[i];
@@ -239,9 +244,9 @@ Coord<Int,DEG,PT1+PT2> operator + (Coord<Int,DEG,PT1> const& c1, Coord<Int,DEG,P
 }
 
 template<class Int, size_t DEG, size_t PT1, size_t PT2>
-Coord<Int,DEG,PT1-PT2> operator - (Coord<Int,DEG,PT1> const& c1, Coord<Int,DEG,PT2> const& c2) {
+math::Coord<Int,DEG,PT1-PT2> operator - (math::Coord<Int,DEG,PT1> const& c1, math::Coord<Int,DEG,PT2> const& c2) {
 	static_assert(PT2 <= PT1, "Impossible de soustraire un point à un vecteur");
-	Coord<Int,DEG,PT1-PT2> r;
+	math::Coord<Int,DEG,PT1-PT2> r;
 
 	for (size_t i = 0; i < DEG; ++i) {
 		r[i] = c1[i] - c2[i];
@@ -251,26 +256,26 @@ Coord<Int,DEG,PT1-PT2> operator - (Coord<Int,DEG,PT1> const& c1, Coord<Int,DEG,P
 }
 
 template<class Int, size_t DEG>
-Coord<Int,DEG,0> operator * (Int const& v, Coord<Int,DEG,0> c) {
+math::Coord<Int,DEG,0> operator * (Int const& v, math::Coord<Int,DEG,0> c) {
 	c *= v;
 	return c;
 }
 
 template<class Int, size_t DEG>
-Coord<Int,DEG,0> operator * (Coord<Int,DEG,0> c, Int const& v) {
+math::Coord<Int,DEG,0> operator * (math::Coord<Int,DEG,0> c, Int const& v) {
 	c *= v;
 	return c;
 }
 
 template<class Int, size_t DEG>
-Coord<Int,DEG,0> operator / (Coord<Int,DEG,0> c, Int const& v) {
+math::Coord<Int,DEG,0> operator / (math::Coord<Int,DEG,0> c, Int const& v) {
 	c /= v;
 	return c;
 }
 
 // - affichage
 template<class Int, size_t DEG, size_t PT>
-std::ostream& operator << (std::ostream& stream, Coord<Int,DEG,PT> const& c) {
+std::ostream& operator << (std::ostream& stream, math::Coord<Int,DEG,PT> const& c) {
 	stream << "(";
 
 	for (size_t i = 0; i < DEG; ++i) {
@@ -281,6 +286,8 @@ std::ostream& operator << (std::ostream& stream, Coord<Int,DEG,PT> const& c) {
 	return stream << ")";
 }
 
+namespace math {
+
 // Alias
 template<class Int, size_t DEG = 2>
 using Point = Coord<Int,DEG,1>;
@@ -288,12 +295,13 @@ using Point = Coord<Int,DEG,1>;
 template<class Int, size_t DEG = 2>
 using Vecteur = Coord<Int,DEG,0>;
 
+} // math
 
 namespace std {
 
 // Hash & Less
 template<class Int, size_t DEG, size_t PT>
-class hash<Coord<Int,DEG,PT>> {
+class hash<math::Coord<Int,DEG,PT>> {
 	public:
 		// Constructeur
 		hash(array<size_t,DEG-1> const& fact) : m_fact(fact) {
@@ -303,7 +311,7 @@ class hash<Coord<Int,DEG,PT>> {
 		hash(array<size_t,DEG-1> const& fact, array<size_t,DEG> const& mins) : m_fact(fact), m_mins(mins) {};
 
 		// Opérateur d'appel
-		size_t operator () (Coord<Int,DEG,PT> const& c) const {
+		size_t operator () (math::Coord<Int,DEG,PT> const& c) const {
 			size_t h = c[0] + m_mins[0];
 
 			for (size_t i = 0; i < DEG-1; ++i) {
@@ -330,7 +338,7 @@ class hash<Coord<Int,DEG,PT>> {
 };
 
 template<class Int, size_t DEG, size_t PT>
-class hash<Coord<Nombre<Int>,DEG,PT>> {
+class hash<math::Coord<math::Nombre<Int>,DEG,PT>> {
 	public:
 		// Constructeur
 		hash(array<size_t,DEG-1> const& fact) : m_fact(fact) {
@@ -340,7 +348,7 @@ class hash<Coord<Nombre<Int>,DEG,PT>> {
 		hash(array<size_t,DEG-1> const& fact, array<size_t,DEG> const& mins) : m_fact(fact), m_mins(mins) {};
 
 		// Opérateur d'appel
-		size_t operator () (Coord<Nombre<Int>,DEG,PT> const& c) const {
+		size_t operator () (math::Coord<math::Nombre<Int>,DEG,PT> const& c) const {
 			size_t h = c[0].val() + m_mins[0];
 
 			for (size_t i = 0; i < DEG-1; ++i) {
@@ -367,9 +375,9 @@ class hash<Coord<Nombre<Int>,DEG,PT>> {
 };
 
 template<class Int, size_t DEG, size_t PT>
-struct less<Coord<Int,DEG,PT>> { // Ordre arbitraire
+struct less<math::Coord<Int,DEG,PT>> { // Ordre arbitraire
 	// Opérateur d'appel
-	bool operator () (Coord<Int,DEG,PT> const& c1, Coord<Int,DEG,PT> const& c2) const {
+	bool operator () (math::Coord<Int,DEG,PT> const& c1, math::Coord<Int,DEG,PT> const& c2) const {
 		for (size_t i = 0; i < DEG; ++i) {
 			if (c1[i] < c2[i]) return true;
 			if (c1[i] > c2[i]) return false;
@@ -380,6 +388,8 @@ struct less<Coord<Int,DEG,PT>> { // Ordre arbitraire
 };
 
 }
+
+namespace math {
 
 // unhash
 template<class Int, size_t DEG, size_t PT>
@@ -396,3 +406,5 @@ Coord<Int,DEG,PT> unhash(std::hash<Coord<Int,DEG,PT>> const& hash, size_t h) {
 
 	return r;
 }
+
+} // math
