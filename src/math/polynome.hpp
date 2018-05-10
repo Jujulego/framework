@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <cmath>
 #include <cstddef>
 #include <ostream>
 #include <type_traits>
@@ -188,6 +189,16 @@ class Polynome {
 
 		size_type size() const {
 			return DEG+1;
+		}
+
+		Int appliquer(Int val) const {
+			Int r = m_facteur[0];
+
+			for (size_t i = 1; i <= DEG; ++i) {
+				r += m_facteurs[i] * std::pow(val, (Int) i);
+			}
+
+			return r;
 		}
 
 		// Itérateurs
