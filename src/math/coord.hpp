@@ -75,18 +75,28 @@ class Coord {
 		}
 
 		// - arithmétique
+		Coord operator + () const {
+			Coord r;
+
+			for (size_t i = 0; i < DEG; ++i) {
+				r[i] = +m_coords[i];
+			}
+
+			return r;
+		}
+
 		Coord operator - () const {
 			Coord r;
 
-			for (int i = 0; i < DEG; ++i) {
+			for (size_t i = 0; i < DEG; ++i) {
 				r[i] = -m_coords[i];
 			}
 
-			return 0;
+			return r;
 		}
 
 		Coord& operator += (Coord<Int,DEG,0> const& v) {
-			for (int i = 0; i < DEG; ++i) {
+			for (size_t i = 0; i < DEG; ++i) {
 				m_coords[i] += v[i];
 			}
 
@@ -94,7 +104,7 @@ class Coord {
 		}
 
 		Coord& operator -= (Coord<Int,DEG,0> const& v) {
-			for (int i = 0; i < DEG; ++i) {
+			for (size_t i = 0; i < DEG; ++i) {
 				m_coords[i] -= v[i];
 			}
 
@@ -137,9 +147,6 @@ class Coord<Int,DEG,0> {
 		Coord(Coord const& c) : m_coords(c.m_coords) {};
 		Coord(std::array<Int,DEG> const& coords) : m_coords(coords) {};
 
-		template<class... I>
-		Coord(I const&... coords) : m_coords({coords...}) {};
-
 		// Opérateurs
 		// - accesseurs
 		Int& operator [] (size_t i) {
@@ -152,7 +159,7 @@ class Coord<Int,DEG,0> {
 
 		// - comparaison
 		bool operator == (Coord const& c) const {
-			for (int i = 0; i < DEG; ++i) {
+			for (size_t i = 0; i < DEG; ++i) {
 				if (m_coords[i] != c[i]) return false;
 			}
 
@@ -160,7 +167,7 @@ class Coord<Int,DEG,0> {
 		}
 
 		bool operator != (Coord const& c) const {
-			for (int i = 0; i < DEG; ++i) {
+			for (size_t i = 0; i < DEG; ++i) {
 				if (m_coords[i] == c[i]) return false;
 			}
 
@@ -168,18 +175,28 @@ class Coord<Int,DEG,0> {
 		}
 
 		// - arithmétique
+		Coord operator + () const {
+			Coord r;
+
+			for (size_t i = 0; i < DEG; ++i) {
+				r[i] = +m_coords[i];
+			}
+
+			return r;
+		}
+
 		Coord operator - () const {
 			Coord r;
 
-			for (int i = 0; i < DEG; ++i) {
+			for (size_t i = 0; i < DEG; ++i) {
 				r[i] = -m_coords[i];
 			}
 
-			return 0;
+			return r;
 		}
 
 		Coord& operator += (Coord<Int,DEG,0> const& v) {
-			for (int i = 0; i < DEG; ++i) {
+			for (size_t i = 0; i < DEG; ++i) {
 				m_coords[i] += v[i];
 			}
 
@@ -187,7 +204,7 @@ class Coord<Int,DEG,0> {
 		}
 
 		Coord& operator -= (Coord<Int,DEG,0> const& v) {
-			for (int i = 0; i < DEG; ++i) {
+			for (size_t i = 0; i < DEG; ++i) {
 				m_coords[i] -= v[i];
 			}
 
@@ -195,7 +212,7 @@ class Coord<Int,DEG,0> {
 		}
 
 		Coord& operator *= (Int const& v) {
-			for (int i = 0; i < DEG; ++i) {
+			for (size_t i = 0; i < DEG; ++i) {
 				m_coords[i] *= v;
 			}
 
@@ -203,7 +220,7 @@ class Coord<Int,DEG,0> {
 		}
 
 		Coord& operator /= (Int const& v) {
-			for (int i = 0; i < DEG; ++i) {
+			for (size_t i = 0; i < DEG; ++i) {
 				m_coords[i] /= v;
 			}
 
@@ -233,7 +250,7 @@ class Coord<Int,DEG,0> {
 // - arithmétique
 template<class Int, size_t DEG, size_t PT1, size_t PT2>
 math::Coord<Int,DEG,PT1+PT2> operator + (math::Coord<Int,DEG,PT1> const& c1, math::Coord<Int,DEG,PT2> const& c2) {
-	static_assert(PT1 + PT2, "Impossible d'ajouter un point à un point");
+	static_assert(PT1 + PT2 < 2, "Impossible d'ajouter un point à un point");
 	math::Coord<Int,DEG,PT1+PT2> r;
 
 	for (size_t i = 0; i < DEG; ++i) {
@@ -289,10 +306,12 @@ std::ostream& operator << (std::ostream& stream, math::Coord<Int,DEG,PT> const& 
 namespace math {
 
 // Alias
-template<class Int, size_t DEG = 2>
+// - point
+template<size_t DEG = 2, class Int = int>
 using Point = Coord<Int,DEG,1>;
 
-template<class Int, size_t DEG = 2>
+// - vecteur
+template<size_t DEG = 2, class Int = int>
 using Vecteur = Coord<Int,DEG,0>;
 
 } // math

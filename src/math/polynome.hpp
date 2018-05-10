@@ -192,7 +192,7 @@ class Polynome {
 		}
 
 		Int appliquer(Int val) const {
-			Int r = m_facteur[0];
+			Int r = m_facteurs[0];
 
 			for (size_t i = 1; i <= DEG; ++i) {
 				r += m_facteurs[i] * std::pow(val, (Int) i);

@@ -273,11 +273,11 @@ class Matrice {                                   // Matrice<Int,0,0> => matrice
 
 		// Opérateurs
 		// - accès élément
-		reference operator [] (Point<size_t,2> const& c) { // (lig, col)
+		reference operator [] (Point<2,size_t> const& c) { // (lig, col)
 			return m_matrice[hash(c)];
 		}
 
-		const_reference operator [] (Point<size_t,2> const& c) const { // (lig, col)
+		const_reference operator [] (Point<2,size_t> const& c) const { // (lig, col)
 			return m_matrice[hash(c)];
 		}
 
@@ -360,7 +360,7 @@ class Matrice {                                   // Matrice<Int,0,0> => matrice
 		}
 
 		// Méthodes
-		Vecteur<size_t,2> size() const {
+		Vecteur<2,size_t> size() const {
 			return {LIG, COL};
 		}
 
@@ -441,7 +441,7 @@ class Matrice {                                   // Matrice<Int,0,0> => matrice
 
 	private:
 		// Attributs
-		std::hash<Point<size_t,2>> hash;
+		std::hash<Point<2,size_t>> hash;
 		std::array<Int,LIG * COL> m_matrice;
 };
 
@@ -696,11 +696,11 @@ class Matrice<Int,0,0> {
 
 		// Opérateurs
 		// - accès élément
-		reference operator [] (Point<size_t,2> const& c) { // (lig, col)
+		reference operator [] (Point<2,size_t> const& c) { // (lig, col)
 			return m_matrice[hash(c)];
 		}
 
-		const_reference operator [] (Point<size_t,2> const& c) const { // (lig, col)
+		const_reference operator [] (Point<2,size_t> const& c) const { // (lig, col)
 			return m_matrice[hash(c)];
 		}
 
@@ -807,7 +807,7 @@ class Matrice<Int,0,0> {
 		}
 
 		// Méthodes
-		Vecteur<size_t,2> size() const {
+		Vecteur<2,size_t> size() const {
 			return {LIG, COL};
 		}
 
@@ -889,7 +889,7 @@ class Matrice<Int,0,0> {
 	private:
 		// Attributs
 		const size_type LIG, COL;
-		std::hash<Point<size_t,2>> hash;
+		std::hash<Point<2,size_t>> hash;
 		std::vector<Int> m_matrice;
 };
 
@@ -903,10 +903,10 @@ typename std::enable_if<LIG != 0 && COLLIG != 0 && COL != 0,math::Matrice<Int,LI
 
 	for (size_t l = 0; l < LIG; ++l) {
 		for (size_t c = 0; c < COL; ++c) {
-			r[math::Point<size_t,2>({l, c})] = 0;
+			r[math::Point<2,size_t>({l, c})] = 0;
 
 			for (size_t i = 0; i < COLLIG; ++i) {
-				r[math::Point<size_t,2>({l, c})] += m1[math::Point<size_t,2>({l, i})] * m2[math::Point<size_t,2>({i, c})];
+				r[math::Point<2,size_t>({l, c})] += m1[math::Point<2,size_t>({l, i})] * m2[math::Point<2,size_t>({i, c})];
 			}
 		}
 	}
@@ -924,10 +924,10 @@ typename std::enable_if<LIG != 0 && COL != 0,math::Matrice<Int,0,0>>::type opera
 
 	for (size_t l = 0; l < LIG; ++l) {
 		for (size_t c = 0; c < m2.nb_col(); ++c) {
-			r[math::Point<size_t,2>({l, c})] = 0;
+			r[math::Point<2,size_t>({l, c})] = 0;
 
 			for (size_t i = 0; i < COL; ++i) {
-				r[math::Point<size_t,2>({l, c})] += m1[math::Point<size_t,2>({l, i})] * m2[math::Point<size_t,2>({i, c})];
+				r[math::Point<2,size_t>({l, c})] += m1[math::Point<2,size_t>({l, i})] * m2[math::Point<2,size_t>({i, c})];
 			}
 		}
 	}

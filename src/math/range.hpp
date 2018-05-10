@@ -13,9 +13,9 @@ template<class Int, size_t DEG>
 class Range {
 	public:
 		// Alias
-		using value_type      = Point<Int,DEG>;
-		using const_reference = Point<Int,DEG> const&;
-		using const_pointer   = Point<Int,DEG> const*;
+		using value_type      = Point<DEG,Int>;
+		using const_reference = Point<DEG,Int> const&;
+		using const_pointer   = Point<DEG,Int> const*;
 
 		// Classes
 		class const_iterator {
@@ -28,7 +28,7 @@ class Range {
 
 				// Constructeur
 				const_iterator() = default;
-				const_iterator(Point<Int,DEG> const& point, Range const& r) : m_point(point), m_range(r) {}
+				const_iterator(Point<DEG,Int> const& point, Range const& r) : m_point(point), m_range(r) {}
 
 				// Opérateurs
 				// - déférenciation
@@ -87,17 +87,17 @@ class Range {
 
 			private:
 				// Attributs
-				Point<Int,DEG> m_point;
+				Point<DEG,Int> m_point;
 				Range m_range;
 		};
 
 		// Constructeur
-		Range(Point<Int,DEG> const& debut, Point<Int,DEG> const& fin) : m_debut(debut), m_fin(fin) {};
+		Range(Point<DEG,Int> const& debut, Point<DEG,Int> const& fin) : m_debut(debut), m_fin(fin) {};
 
 		// Itérateurs
 		const_iterator begin() const { return const_iterator(m_debut, *this); }
 		const_iterator end()   const {
-			Point<Int,DEG> fin;
+			Point<DEG,Int> fin;
 
 			for (size_t d = 1; d < DEG; ++d) fin[d] = m_debut[d];
 			fin[0] = m_fin[0];
@@ -107,23 +107,23 @@ class Range {
 
 	private:
 		// Attributs
-		Point<Int,DEG> m_debut;
-		Point<Int,DEG> m_fin;
+		Point<DEG,Int> m_debut;
+		Point<DEG,Int> m_fin;
 };
 
 template<class Int, size_t DEG>
-Range<Int,DEG> range(Point<Int,DEG> const& debut, Point<Int,DEG> const& fin) {
+Range<Int,DEG> range(Point<DEG,Int> const& debut, Point<DEG,Int> const& fin) {
 	return Range<Int,DEG>(debut, fin);
 }
 
 template<class Int, size_t DEG>
-Range<Int,DEG> range(Point<Int,DEG> const& debut, Vecteur<Int,DEG> const& t) {
+Range<Int,DEG> range(Point<DEG,Int> const& debut, Vecteur<DEG,Int> const& t) {
 	return Range<Int,DEG>(debut, debut + t);
 }
 
 template<class Int, size_t DEG>
-Range<Int,DEG> range(Vecteur<Int,DEG> const& t) {
-	Point<Int,DEG> debut;
+Range<Int,DEG> range(Vecteur<DEG,Int> const& t) {
+	Point<DEG,Int> debut;
 	for (size_t d = 0; d < DEG; ++d) debut[d] = 0;
 
 	return range(debut, t);
