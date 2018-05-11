@@ -9,6 +9,9 @@
 #include "manip.hpp"
 #include "style.hpp"
 
+// Namespace
+namespace console {
+
 // Classe
 template<class Stream>
 class posstream {
@@ -114,3 +117,5 @@ class posstream {
 			m_style = style;
 		}
 };
+
+} // console

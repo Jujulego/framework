@@ -9,6 +9,9 @@
 # include <windows.h>
 #endif
 
+// Namespaces
+using namespace console;
+
 // Opérateur externe
 std::ostream& operator << (std::ostream& stream, BaseManip const& manip) {
 	return manip.appliquer(stream);

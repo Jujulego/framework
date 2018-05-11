@@ -13,6 +13,7 @@
 #endif
 
 // Namespaces
+using namespace console;
 using namespace style;
 
 // Mutex

@@ -5,6 +5,9 @@
 
 #include "manip.hpp"
 
+// Namespace
+namespace console {
+
 namespace style {
 	// Enumérations
 	enum Couleur {
@@ -144,5 +147,7 @@ namespace style {
 	static const Style critique(ROUGE, TEXTE, GRAS);
 }
 
+} // console
+
 // Opérateurs externes
-std::ostream& operator << (std::ostream& stream, Style const& style);
+std::ostream& operator << (std::ostream& stream, console::Style const& style);

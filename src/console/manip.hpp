@@ -5,6 +5,9 @@
 
 #include "math/coord.hpp"
 
+// Namespace
+namespace console {
+
 // -------------- BaseManip ------------
 class BaseManip {
 	public:
@@ -14,9 +17,6 @@ class BaseManip {
 		// Méthodes
 		virtual std::ostream& appliquer(std::ostream& stream) const = 0;
 };
-
-// Opérateur externe
-std::ostream& operator << (std::ostream& stream, BaseManip const& manip);
 
 // ------------- ClearManip ------------
 class ClearManip : public BaseManip {
@@ -96,9 +96,6 @@ class MouvManip : public BaseManip {
 		int const& dy() const;
 };
 
-// Opérateur externe
-MouvManip operator * (int const& k, MouvManip const& mm);
-
 // ----------- EffLigneManip -----------
 class EffLigneManip : public BaseManip {
 	public:
@@ -150,4 +147,10 @@ namespace manip {
 	static MouvManip dy(0, 1);
 	inline MouvManip mouv(int dx, int dy)    { return MouvManip(dx, dy); }
 	inline MouvManip mouv(math::Vecteur<> v) { return MouvManip(v);      }
-};
+} // manip
+
+} // console
+
+// Opérateurs externes
+std::ostream& operator << (std::ostream& stream, console::BaseManip const& manip);
+console::MouvManip operator * (int const& k, console::MouvManip const& mm);
