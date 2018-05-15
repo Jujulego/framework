@@ -25,7 +25,7 @@ class posstream {
 
 	public:
 		// Constructeur
-		posstream(Stream* flux, math::Point const& pt) : m_flux(flux), m_coord(pt) {}
+		posstream(Stream* flux, math::Point<size_t,2> const& pt) : m_flux(flux), m_coord(pt) {}
 		posstream(Stream* flux, int x, int y) : m_flux(flux), m_coord(x, y) {}
 
 		// Opérateurs
@@ -36,7 +36,7 @@ class posstream {
 			oss << obj;
 
 			// Affichage & decompte
-			*m_flux << manip::sauve << m_coord + math::Vecteur(m_nb, m_lig);
+			*m_flux << manip::sauve << m_coord + manip::mouv(m_nb, m_lig);
 			*m_flux << m_style << oss.str() << style::defaut;
 			*m_flux << manip::restore;
 
@@ -54,7 +54,7 @@ class posstream {
 			oss << manip;
 
 			// Affichage
-			*m_flux << manip::sauve << m_coord + math::Vecteur(m_nb, m_lig);
+			*m_flux << manip::sauve << m_coord + manip::mouv(m_nb, m_lig);
 			*m_flux << m_style << oss.str() << style::defaut;
 			*m_flux << manip::restore;
 
@@ -70,7 +70,7 @@ class posstream {
 		}
 
 		posstream<Stream>& operator << (EffLigneManip const&) {
-			*m_flux << manip::sauve << m_coord + m_lig * manip::y << style::defaut;
+			*m_flux << manip::sauve << m_coord + m_lig * manip::dy << style::defaut;
 
 			for (int i = 0; i < m_nb; ++i) {
 				*m_flux << ' ';

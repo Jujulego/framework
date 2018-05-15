@@ -13,9 +13,9 @@ template<class Int, size_t DEG>
 class Range {
 	public:
 		// Alias
-		using value_type      = Point<DEG,Int>;
-		using const_reference = Point<DEG,Int> const&;
-		using const_pointer   = Point<DEG,Int> const*;
+		using value_type      = Point<Int,DEG>;
+		using const_reference = Point<Int,DEG> const&;
+		using const_pointer   = Point<Int,DEG> const*;
 
 		// Classes
 		class const_iterator {
@@ -28,7 +28,7 @@ class Range {
 
 				// Constructeur
 				const_iterator() = default;
-				const_iterator(Point<DEG,Int> const& point, Range const& r) : m_point(point), m_range(r) {}
+				const_iterator(Point<Int,DEG> const& point, Range const& r) : m_point(point), m_range(r) {}
 
 				// Opérateurs
 				// - déférenciation
@@ -46,11 +46,13 @@ class Range {
 
 				// - incrémentation & décrémentation
 				const_iterator& operator ++ () {
-					for (size_t d = DEG-1; d >= 0; --d) {
+//					for (size_t d = DEG-1; d >= 0; --d) {
+					for (size_t d = 0; d < DEG; ++d) {
 						++(m_point[d]);
 
 						if (m_point[d] >= m_range.m_fin[d]) {
-							if (d > 0) m_point[d] = m_range.m_debut[d];
+//							if (d > 0) m_point[d] = m_range.m_debut[d];
+							if (d < DEG-1) m_point[d] = m_range.m_debut[d];
 						} else {
 							break;
 						}
@@ -60,7 +62,8 @@ class Range {
 				}
 
 				const_iterator& operator -- () {
-					for (size_t d = DEG-1; d >= 0; --d) {
+//					for (size_t d = DEG-1; d >= 0; --d) {
+					for (size_t d = 0; d < DEG; ++d) {
 						--(m_point[d]);
 
 						if (m_point[d] < m_range.m_debut[d]) {
@@ -87,46 +90,49 @@ class Range {
 
 			private:
 				// Attributs
-				Point<DEG,Int> m_point;
+				Point<Int,DEG> m_point;
 				Range m_range;
 		};
 
 		// Constructeur
-		Range(Point<DEG,Int> const& debut, Point<DEG,Int> const& fin) : m_debut(debut), m_fin(fin) {};
+		Range(Point<Int,DEG> const& debut, Point<Int,DEG> const& fin) : m_debut(debut), m_fin(fin) {};
 
 		// Itérateurs
 		const_iterator begin() const { return const_iterator(m_debut, *this); }
 		const_iterator end()   const {
-			Point<DEG,Int> fin;
+			Point<Int,DEG> fin;
 
-			for (size_t d = 1; d < DEG; ++d) fin[d] = m_debut[d];
-			fin[0] = m_fin[0];
+//			for (size_t d = 1; d < DEG; ++d) fin[d] = m_debut[d];
+//			fin[0] = m_fin[0];
+
+			for (size_t d = 0; d < DEG-1; ++d) fin[d] = m_debut[d];
+			fin[DEG-1] = m_fin[DEG-1];
 
 			return const_iterator(fin, *this);
 		}
 
 	private:
 		// Attributs
-		Point<DEG,Int> m_debut;
-		Point<DEG,Int> m_fin;
+		Point<Int,DEG> m_debut;
+		Point<Int,DEG> m_fin;
 };
 
 template<class Int, size_t DEG>
-Range<Int,DEG> range(Point<DEG,Int> const& debut, Point<DEG,Int> const& fin) {
+Range<Int,DEG> range(Point<Int,DEG> const& debut, Point<Int,DEG> const& fin) {
 	return Range<Int,DEG>(debut, fin);
 }
 
 template<class Int, size_t DEG>
-Range<Int,DEG> range(Point<DEG,Int> const& debut, Vecteur<DEG,Int> const& t) {
+Range<Int,DEG> range(Point<Int,DEG> const& debut, Vecteur<Int,DEG> const& t) {
 	return Range<Int,DEG>(debut, debut + t);
 }
 
 template<class Int, size_t DEG>
-Range<Int,DEG> range(Vecteur<DEG,Int> const& t) {
-	Point<DEG,Int> debut;
-	for (size_t d = 0; d < DEG; ++d) debut[d] = 0;
+Range<Int,DEG> range(Vecteur<Int,DEG> const& t) {
+//	Point<Int,DEG> debut;
+//	for (size_t d = 0; d < DEG; ++d) debut[d] = 0;
 
-	return range(debut, t);
+	return range(Point<Int,DEG>(), t);
 }
 
 } // math

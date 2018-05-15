@@ -2,6 +2,7 @@ add_executable(run
 	main.cpp
 
 	# Console
+	console/chars.hpp
 	console/console.cpp
 	console/console.hpp
 	console/manip.cpp

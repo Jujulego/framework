@@ -15,7 +15,7 @@ namespace console {
  *   B           Ici DG indique que le caractère va de Droite à Gauche
  */
 
-#ifdef __gnu_linux___ // Pour Linux
+#ifdef __gnu_linux__ // Pour Linux
 
 // Tableau
 static const std::string TAB_HB   = "\xe2\x9";

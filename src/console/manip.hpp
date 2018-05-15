@@ -25,55 +25,25 @@ class ClearManip : public BaseManip {
 		virtual std::ostream& appliquer(std::ostream& stream) const override;
 };
 
-// ------------- CoordManip ------------
-class CoordManip : public BaseManip {
-	private:
-		// Attributs
-		math::Point<> m_point;
-
-	public:
-		// Constructeur
-		CoordManip(math::Point<> const& p);
-		CoordManip(int x = 0, int y = 0);
-
-		// Opérateurs
-		CoordManip  operator +  () const;
-		CoordManip  operator -  () const;
-		CoordManip  operator +  (math::Vecteur<> const& v) const;
-		CoordManip  operator -  (math::Vecteur<> const& v) const;
-		CoordManip& operator += (math::Vecteur<> const& v);
-		CoordManip& operator -= (math::Vecteur<> const& v);
-
-		// Méthodes
-		virtual std::ostream& appliquer(std::ostream& stream) const override;
-
-		// - accesseurs
-		int& x();
-		int const& x() const;
-
-		int& y();
-		int const& y() const;
-};
-
 // ------------- MouvManip -------------
 class MouvManip : public BaseManip {
 	private:
 		// Attributs
-		math::Vecteur<> m_vecteur;
+		math::Vecteur<int,2> m_vecteur;
 
 	public:
 		// Constructeur
-		MouvManip(math::Vecteur<> const& v);
+		MouvManip(math::Vecteur<int,2> const& v);
 		MouvManip(int dx, int dy);
 
 		// Opérateurs
 		MouvManip  operator + () const;
 		MouvManip  operator - () const;
 
-		MouvManip  operator +  (math::Vecteur<> const& v) const;
-		MouvManip  operator -  (math::Vecteur<> const& v) const;
-		MouvManip& operator += (math::Vecteur<> const& v);
-		MouvManip& operator -= (math::Vecteur<> const& v);
+		MouvManip  operator +  (math::Vecteur<int,2> const& v) const;
+		MouvManip  operator -  (math::Vecteur<int,2> const& v) const;
+		MouvManip& operator += (math::Vecteur<int,2> const& v);
+		MouvManip& operator -= (math::Vecteur<int,2> const& v);
 
 		MouvManip  operator +  (MouvManip const& mm) const;
 		MouvManip  operator -  (MouvManip const& mm) const;
@@ -89,11 +59,51 @@ class MouvManip : public BaseManip {
 		virtual std::ostream& appliquer(std::ostream& stream) const override;
 
 		// - accesseurs
+		math::Vecteur<int,2>& vecteur();
+		math::Vecteur<int,2> const& vecteur() const;
+
 		int& dx();
 		int const& dx() const;
 
 		int& dy();
 		int const& dy() const;
+};
+
+// ------------- CoordManip ------------
+class CoordManip : public BaseManip {
+	private:
+		// Attributs
+		math::Point<size_t,2> m_point;
+
+	public:
+		// Constructeur
+		CoordManip(math::Point<size_t,2> const& p);
+		CoordManip(size_t x = 0, size_t y = 0);
+
+		// Opérateurs
+		CoordManip  operator +  () const;
+		CoordManip  operator -  () const;
+		CoordManip  operator +  (math::Vecteur<int,2> const& v) const;
+		CoordManip  operator -  (math::Vecteur<int,2> const& v) const;
+		CoordManip& operator += (math::Vecteur<int,2> const& v);
+		CoordManip& operator -= (math::Vecteur<int,2> const& v);
+		CoordManip  operator +  (MouvManip const& mm) const;
+		CoordManip  operator -  (MouvManip const& mm) const;
+		CoordManip& operator += (MouvManip const& mm);
+		CoordManip& operator -= (MouvManip const& mm);
+
+		// Méthodes
+		virtual std::ostream& appliquer(std::ostream& stream) const override;
+
+		// - accesseurs
+		math::Point<size_t,2>& point();
+		math::Point<size_t,2> const& point() const;
+
+		size_t& x();
+		size_t const& x() const;
+
+		size_t& y();
+		size_t const& y() const;
 };
 
 // ----------- EffLigneManip -----------
@@ -131,10 +141,8 @@ namespace manip {
 
 	// Coords
 	static CoordManip origine(0, 0); // Le point en haut à gauche
-	static CoordManip x(1, 0);
-	static CoordManip y(0, 1);
 	inline CoordManip coord(int x, int y)     { return CoordManip(x, y); }
-	inline CoordManip coord(math::Point<> pt) { return CoordManip(pt);   }
+	inline CoordManip coord(math::Point<size_t,2> pt) { return CoordManip(pt);   }
 
 	// Basiques
 	static EffLigneManip eff_ligne;  // Efface la ligne
@@ -146,7 +154,7 @@ namespace manip {
 	static MouvManip dx(1, 0);       // Décalage du curseur
 	static MouvManip dy(0, 1);
 	inline MouvManip mouv(int dx, int dy)    { return MouvManip(dx, dy); }
-	inline MouvManip mouv(math::Vecteur<> v) { return MouvManip(v);      }
+	inline MouvManip mouv(math::Vecteur<int,2> v) { return MouvManip(v);      }
 } // manip
 
 } // console

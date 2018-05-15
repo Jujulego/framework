@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "coord.hpp"
+#include "meta.hpp"
 
 // Namespace
 namespace math {
@@ -268,16 +269,20 @@ class Matrice {                                   // Matrice<Int,0,0> => matrice
 		};
 
 		// Constructeur
-		Matrice() : hash({LIG}) {}
-		Matrice(std::array<Int,LIG * COL> const& matrice) : hash({LIG}), m_matrice(matrice) {}
+		Matrice() : hash(meta::max<size_t,LIG,COL>::value) {
+			for (unsigned i = 0; i < LIG*COL; ++i) {
+				m_matrice[i] = 0;
+			}
+		}
+		Matrice(std::array<Int,LIG * COL> const& matrice) : hash(meta::max<size_t,LIG,COL>::value), m_matrice(matrice) {}
 
 		// Opérateurs
 		// - accès élément
-		reference operator [] (Point<2,size_t> const& c) { // (lig, col)
+		reference operator [] (Point<unsigned,2> const& c) { // (lig, col)
 			return m_matrice[hash(c)];
 		}
 
-		const_reference operator [] (Point<2,size_t> const& c) const { // (lig, col)
+		const_reference operator [] (Point<unsigned,2> const& c) const { // (lig, col)
 			return m_matrice[hash(c)];
 		}
 
@@ -360,8 +365,8 @@ class Matrice {                                   // Matrice<Int,0,0> => matrice
 		}
 
 		// Méthodes
-		Vecteur<2,size_t> size() const {
-			return {LIG, COL};
+		Vecteur<unsigned,2> size() const {
+			return Vecteur<unsigned,2>({LIG, COL});
 		}
 
 		size_type nb_lig() const {
@@ -441,7 +446,7 @@ class Matrice {                                   // Matrice<Int,0,0> => matrice
 
 	private:
 		// Attributs
-		std::hash<Point<2,size_t>> hash;
+		std::hash<Point<unsigned,2>> hash;
 		std::array<Int,LIG * COL> m_matrice;
 };
 
@@ -680,8 +685,8 @@ class Matrice<Int,0,0> {
 		};
 
 		// Constructeur
-		Matrice(size_type lig)                : LIG(lig), COL(lig), hash({lig}), m_matrice(lig * lig) {};
-		Matrice(size_type lig, size_type col) : LIG(lig), COL(col), hash({lig}), m_matrice(lig * col) {};
+		Matrice(size_type lig)                : LIG(lig), COL(lig), hash(std::max(lig, lig)), m_matrice(lig * lig) {};
+		Matrice(size_type lig, size_type col) : LIG(lig), COL(col), hash(std::max(lig, col)), m_matrice(lig * col) {};
 
 		Matrice(std::vector<std::vector<Int>> const& matrice)
 			: LIG(matrice.size()), COL(matrice.front().size()),
@@ -696,11 +701,11 @@ class Matrice<Int,0,0> {
 
 		// Opérateurs
 		// - accès élément
-		reference operator [] (Point<2,size_t> const& c) { // (lig, col)
+		reference operator [] (Point<unsigned,2> const& c) { // (lig, col)
 			return m_matrice[hash(c)];
 		}
 
-		const_reference operator [] (Point<2,size_t> const& c) const { // (lig, col)
+		const_reference operator [] (Point<unsigned,2> const& c) const { // (lig, col)
 			return m_matrice[hash(c)];
 		}
 
@@ -807,8 +812,8 @@ class Matrice<Int,0,0> {
 		}
 
 		// Méthodes
-		Vecteur<2,size_t> size() const {
-			return {LIG, COL};
+		Vecteur<unsigned,2> size() const {
+			return Vecteur<unsigned,2>({LIG, COL});
 		}
 
 		size_type nb_lig() const {
@@ -889,7 +894,7 @@ class Matrice<Int,0,0> {
 	private:
 		// Attributs
 		const size_type LIG, COL;
-		std::hash<Point<2,size_t>> hash;
+		std::hash<Point<unsigned,2>> hash;
 		std::vector<Int> m_matrice;
 };
 
@@ -901,12 +906,12 @@ template<class Int, size_t LIG, size_t COLLIG, size_t COL>
 typename std::enable_if<LIG != 0 && COLLIG != 0 && COL != 0,math::Matrice<Int,LIG,COL>>::type operator * (math::Matrice<Int,LIG,COLLIG> const& m1, math::Matrice<Int,COLLIG,COL> const& m2) {
 	math::Matrice<Int,LIG,COL> r;
 
-	for (size_t l = 0; l < LIG; ++l) {
-		for (size_t c = 0; c < COL; ++c) {
-			r[math::Point<2,size_t>({l, c})] = 0;
+	for (unsigned l = 0; l < LIG; ++l) {
+		for (unsigned c = 0; c < COL; ++c) {
+			r[math::Point<unsigned,2>({l, c})] = 0;
 
-			for (size_t i = 0; i < COLLIG; ++i) {
-				r[math::Point<2,size_t>({l, c})] += m1[math::Point<2,size_t>({l, i})] * m2[math::Point<2,size_t>({i, c})];
+			for (unsigned i = 0; i < COLLIG; ++i) {
+				r[math::Point<unsigned,2>({l, c})] += m1[math::Point<unsigned,2>({l, i})] * m2[math::Point<unsigned,2>({i, c})];
 			}
 		}
 	}
@@ -922,12 +927,12 @@ typename std::enable_if<LIG != 0 && COL != 0,math::Matrice<Int,0,0>>::type opera
 	if (COL != m2.nb_lig()) throw std::domain_error("Pour le produit matriciel : C1 = L2");
 	math::Matrice<Int,0,0> r(LIG, m2.nb_col());
 
-	for (size_t l = 0; l < LIG; ++l) {
-		for (size_t c = 0; c < m2.nb_col(); ++c) {
-			r[math::Point<2,size_t>({l, c})] = 0;
+	for (unsigned l = 0; l < LIG; ++l) {
+		for (unsigned c = 0; c < m2.nb_col(); ++c) {
+			r[math::Point<unsigned,2>({l, c})] = 0;
 
-			for (size_t i = 0; i < COL; ++i) {
-				r[math::Point<2,size_t>({l, c})] += m1[math::Point<2,size_t>({l, i})] * m2[math::Point<2,size_t>({i, c})];
+			for (unsigned i = 0; i < COL; ++i) {
+				r[math::Point<unsigned,2>({l, c})] += m1[math::Point<unsigned,2>({l, i})] * m2[math::Point<unsigned,2>({i, c})];
 			}
 		}
 	}
