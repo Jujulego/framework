@@ -11,7 +11,7 @@ $(VERBOSE).SILENT:
 
 # Compilation
 all: $(BUILD)
-	$(MAKE) -C $(BUILD) $(EXEC)
+	$(MAKE) -C $(BUILD) all
 	cp $(BUILD)/src/$(EXEC) .
 
 .PHONY: all

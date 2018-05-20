@@ -36,7 +36,7 @@ void Menu::afficher() const {
 	CoordManip fin(  0, 11 + m_entrees.size());
 
 	// Lambda
-	static const auto aff = [&] (unsigned i) -> void {
+	const auto aff = [&] (unsigned i) -> void {
 		std::string texte;
 
 		if (i == m_entrees.size()) {
