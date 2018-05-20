@@ -6,14 +6,17 @@
 #include <tuple>
 #include <vector>
 
+#include "asciiart.hpp"
+
 namespace console {
 
 // Classe
 class Menu {
 	private:
 		// Attributs
-		std::string m_entete;
+		asciiart<8>::string m_entete;
 		std::string m_quitter;
+
 		std::vector<std::tuple<std::string,std::function<void()>>> m_entrees;
 
 	public:

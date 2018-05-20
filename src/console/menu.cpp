@@ -6,6 +6,7 @@
 
 #include "math/coord.hpp"
 
+#include "asciiart.hpp"
 #include "chars.hpp"
 #include "console.hpp"
 #include "manip.hpp"
@@ -18,18 +19,12 @@ using namespace console;
 // Constructeur
 Menu::Menu(std::string const& entete) : Menu(entete, "Quitter") {}
 Menu::Menu(std::string const& entete, std::string const& quitter)
-	: m_entete(entete), m_quitter(quitter) {}
+	: m_entete(asciiart<8>::conv(entete)), m_quitter(quitter) {}
 
 // Méthodes statiques
 void Menu::aff_entete() const {
-	std::cout << manip::clear;
-	std::cout << "         _____" << std::endl;
-	std::cout << "        / ___ \\                     __" << std::endl;
-	std::cout << "       / /  / / ___    ________    /_/ ____    ___    __  __  ____" << std::endl;
-	std::cout << "      / /  / / / _ \\  / __  __ \\  __  / __ \\  / _ \\  / / / / / __ \\" << std::endl;
-	std::cout << "     / /__/ / /  __/ / / / / / / / / / / / / /  __/ / /_/ / / / /_/" << std::endl;
-	std::cout << "    /______/  \\___/ /_/ /_/ /_/ /_/ /_/ /_/  \\___/ /_____/ /_/" << std::endl;
-	std::cout << std::endl;
+	asciiart<8>::ostream aas(&std::cout);
+	aas << manip::clear << m_entete << std::endl;
 }
 
 // Méthodes
@@ -37,8 +32,8 @@ void Menu::afficher() const {
 	// Initialisation
 	unsigned item  = 0;
 	bool continuer = true;
-	CoordManip base(38, 8);
-	CoordManip fin(  0, 9 + m_entrees.size());
+	CoordManip base(m_entete.screen_size()/2, 10);
+	CoordManip fin(  0, 11 + m_entrees.size());
 
 	// Lambda
 	static const auto aff = [&] (unsigned i) -> void {
@@ -74,6 +69,8 @@ refresh:
 
 					aff(item);
 					aff(item-1);
+				} else {
+					std::cout << manip::buzz;
 				}
 
 				break;
@@ -84,6 +81,8 @@ refresh:
 
 					aff(item);
 					aff(item+1);
+				} else {
+					std::cout << manip::buzz;
 				}
 
 				break;

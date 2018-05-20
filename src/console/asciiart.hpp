@@ -67,6 +67,10 @@ class asciiart_char {
 		}
 
 		// Méthodes
+		size_t screen_size() const {
+			return m_asciiart[0].size();
+		}
+
 		// - accesseurs
 		char to_char() const {
 			return m_char;
@@ -298,6 +302,18 @@ class asciiart_string {
 		}
 
 		// Méthodes
+		size_t screen_size() const {
+			size_t t = 0;
+
+			for (size_t i = 0; i < m_chaine.size(); ++i) {
+				t += m_chaine[i].screen_size()+1;
+
+				if (i != 0) t += m_chaine[i].decalx();
+			}
+
+			return t;
+		}
+
 		// - taille / capacité
 		size_type size() const noexcept {
 			return m_chaine.size();
@@ -888,6 +904,7 @@ struct asciiart {
 
 	template<class Stream>
 	using stream = base::asciiart_stream<LIG,Stream>;
+	using ostream = base::asciiart_stream<LIG,std::ostream>;
 
 	template<class Stream>
 	using posstream = base::asciiart_stream<LIG,posstream<Stream>>;
@@ -910,6 +927,7 @@ struct asciiart<8> {
 
 	template<class Stream>
 	using stream = base::asciiart_stream<8,Stream>;
+	using ostream = base::asciiart_stream<8,std::ostream>;
 
 	template<class Stream>
 	using posstream = base::asciiart_stream<8,posstream<Stream>>;
@@ -949,6 +967,34 @@ struct asciiart<8> {
 	static const char_t y;
 	static const char_t z;
 
+	// Majuscules
+	static const char_t A;
+	static const char_t B;
+	static const char_t C;
+	static const char_t D;
+	static const char_t E;
+	static const char_t F;
+	static const char_t G;
+	static const char_t H;
+	static const char_t I;
+	static const char_t J;
+	static const char_t K;
+	static const char_t L;
+	static const char_t M;
+	static const char_t N;
+	static const char_t O;
+	static const char_t P;
+	static const char_t Q;
+	static const char_t R;
+	static const char_t S;
+	static const char_t T;
+	static const char_t U;
+	static const char_t V;
+	static const char_t W;
+	static const char_t X;
+	static const char_t Y;
+	static const char_t Z;
+
 	// Caractères spéciaux
 	static const char_t eof;
 	static const char_t espace;
@@ -961,7 +1007,6 @@ namespace std {
 // char_traits
 template<size_t LIG>
 struct char_traits<typename console::base::asciiart_char<LIG>> : public char_traits<char> {
-//struct char_traits<typename console::asciiart<LIG>::char_t> : public char_traits<char> {
 	// Alias
 	using char_type = console::base::asciiart_char<LIG>;
 
