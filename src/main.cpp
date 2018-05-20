@@ -2,23 +2,17 @@
 #include <iomanip>
 #include <iostream>
 
-#include "console/manip.hpp"
+#include "console.hpp"
 
 // Main
 int main() {
-	std::cout << manip::clear << std::endl;
-	std::cout << "         ____                              __ " << std::endl;
-	std::cout << "        / __ \\                 __       __/ /_" << std::endl;
-	std::cout << "       / /_/ / ____    ___    /_/ ___  /_  __/" << std::endl;
-	std::cout << "      / ____/ / __ \\  / _ \\  __  / _ \\  / /   " << std::endl;
-	std::cout << "     / /     / / /_/ / // / / / /  __/ / /    " << std::endl;
-	std::cout << "    /_/     /_/      \\___/ / /  \\___/ /_/     " << std::endl;
-	std::cout << "                        __/ /                 " << std::endl;
-	std::cout << "                       /___/                  " << std::endl;
+	console::asciiart<8>::posstream<std::ostream> aasout(&std::cout, 0, 0);
 
-	std::cout << manip::coord(20, 10) << "Millieu";
-	std::cout << -6 * manip::dx + manip::dy << "Super";
-	std::cout << std::endl;
+	std::cout << console::manip::clear << console::manip::mouv(0, 10);
+	std::cout << "Cool !" << std::endl;
+
+	aasout << console::style::bleu << console::style::gras << console::asciiart<8>::conv("framework") << console::style::defaut;// << std::endl;
+	aasout << std::endl;
 
 	return 0;
 }

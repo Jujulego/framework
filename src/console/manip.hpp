@@ -73,12 +73,12 @@ class MouvManip : public BaseManip {
 class CoordManip : public BaseManip {
 	private:
 		// Attributs
-		math::Point<size_t,2> m_point;
+		math::Point<unsigned,2> m_point;
 
 	public:
 		// Constructeur
-		CoordManip(math::Point<size_t,2> const& p);
-		CoordManip(size_t x = 0, size_t y = 0);
+		CoordManip(math::Point<unsigned,2> const& p);
+		CoordManip(unsigned x = 0, unsigned y = 0);
 
 		// Opérateurs
 		CoordManip  operator +  () const;
@@ -96,14 +96,14 @@ class CoordManip : public BaseManip {
 		virtual std::ostream& appliquer(std::ostream& stream) const override;
 
 		// - accesseurs
-		math::Point<size_t,2>& point();
-		math::Point<size_t,2> const& point() const;
+		math::Point<unsigned,2>& point();
+		math::Point<unsigned,2> const& point() const;
 
-		size_t& x();
-		size_t const& x() const;
+		unsigned& x();
+		unsigned const& x() const;
 
-		size_t& y();
-		size_t const& y() const;
+		unsigned& y();
+		unsigned const& y() const;
 };
 
 // ----------- EffLigneManip -----------
@@ -136,27 +136,26 @@ class BuzzManip : public BaseManip {
 
 // Instances
 namespace manip {
-	// Basiques
-	static ClearManip clear;         // Efface l'écran
 
-	// Coords
-	static CoordManip origine(0, 0); // Le point en haut à gauche
-	inline CoordManip coord(int x, int y)     { return CoordManip(x, y); }
-	inline CoordManip coord(math::Point<size_t,2> pt) { return CoordManip(pt);   }
+// - basiques
+static ClearManip clear;         // Efface l'écran
+static EffLigneManip eff_ligne;  // Efface la ligne
+static SauveManip    sauve;      // Sauvegarde la position du curseur
+static RestoreManip  restore;    // Restore la dernière position sauvegardée
+static BuzzManip     buzz;       // Fait buzzer l'ordi
 
-	// Basiques
-	static EffLigneManip eff_ligne;  // Efface la ligne
-	static SauveManip    sauve;      // Sauvegarde la position du curseur
-	static RestoreManip  restore;    // Restore la dernière position sauvegardée
-	static BuzzManip     buzz;       // Fait buzzer l'ordi
+// - coords
+static CoordManip origine(0, 0); // Le point en haut à gauche
+inline CoordManip coord(int x, int y)     { return CoordManip(x, y); }
+inline CoordManip coord(math::Point<unsigned,2> pt) { return CoordManip(pt);   }
 
-	// Mouv
-	static MouvManip dx(1, 0);       // Décalage du curseur
-	static MouvManip dy(0, 1);
-	inline MouvManip mouv(int dx, int dy)    { return MouvManip(dx, dy); }
-	inline MouvManip mouv(math::Vecteur<int,2> v) { return MouvManip(v);      }
+// - mouv
+static MouvManip dx(1, 0);       // Décalage du curseur
+static MouvManip dy(0, 1);
+inline MouvManip mouv(int dx, int dy)    { return MouvManip(dx, dy); }
+inline MouvManip mouv(math::Vecteur<int,2> v) { return MouvManip(v);      }
+
 } // manip
-
 } // console
 
 // Opérateurs externes

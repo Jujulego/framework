@@ -6,6 +6,8 @@
 #include <string>
 
 #include "math/coord.hpp"
+
+#include "chars.hpp"
 #include "manip.hpp"
 #include "style.hpp"
 
@@ -21,12 +23,13 @@ class posstream {
 		int m_lig = 0;
 		Stream* m_flux;
 		CoordManip m_coord;
+		MouvManip m_memoire;
 		Style m_style = style::defaut;
 
 	public:
 		// Constructeur
-		posstream(Stream* flux, math::Point<size_t,2> const& pt) : m_flux(flux), m_coord(pt) {}
-		posstream(Stream* flux, int x, int y) : m_flux(flux), m_coord(x, y) {}
+		posstream(Stream* flux, math::Point<unsigned,2> const& pt) : m_flux(flux), m_coord(pt) {}
+		posstream(Stream* flux, unsigned x, unsigned y) : m_flux(flux), m_coord(x, y), m_memoire(0, 0) {}
 
 		// Opérateurs
 		template<class T>
@@ -42,8 +45,23 @@ class posstream {
 
 			for (char c : oss.str()) {
 				m_nb++;
-				if (c == '\n') m_lig++;
+
+				if (c == '\n') {
+					m_lig++;
+					m_nb = 0;
+				}
 			}
+
+			return *this;
+		}
+
+		posstream<Stream>& operator << (Code const& code) {
+			// Affichage & decompte
+			*m_flux << manip::sauve << m_coord + manip::mouv(m_nb, m_lig);
+			*m_flux << m_style << code.str() << style::defaut;
+			*m_flux << manip::restore;
+
+			m_nb++;
 
 			return *this;
 		}
@@ -60,6 +78,7 @@ class posstream {
 
 			for (char c : oss.str()) {
 				m_nb++;
+
 				if (c == '\n') {
 					m_lig++;
 					m_nb = 0;
@@ -93,6 +112,17 @@ class posstream {
 			m_nb  += mm.dx();
 			m_lig += mm.dy();
 
+			return *this;
+		}
+
+		posstream& operator << (SauveManip const&) {
+			m_memoire = manip::mouv(m_nb, m_lig);
+			return *this;
+		}
+
+		posstream& operator << (RestoreManip const&) {
+			m_nb  = m_memoire.dx();
+			m_lig = m_memoire.dy();
 			return *this;
 		}
 

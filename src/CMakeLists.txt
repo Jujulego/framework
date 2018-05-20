@@ -2,11 +2,16 @@ add_executable(run
 	main.cpp
 
 	# Console
+	console/asciiart.cpp
+	console/asciiart.hpp
+	console/chars.cpp
 	console/chars.hpp
 	console/console.cpp
 	console/console.hpp
 	console/manip.cpp
 	console/manip.hpp
+	console/menu.hpp
+	console/menu.cpp
 	console/posstream.hpp
 	console/style.cpp
 	console/style.hpp

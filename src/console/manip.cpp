@@ -30,8 +30,8 @@ std::ostream& ClearManip::appliquer(std::ostream& stream) const {
 
 // ------------- CoordManip ------------
 // Constructeur
-CoordManip::CoordManip(math::Point<size_t,2> const& pt) : m_point(pt) {}
-CoordManip::CoordManip(size_t x, size_t y)              : m_point({x, y}) {}
+CoordManip::CoordManip(math::Point<unsigned,2> const& pt) : m_point(pt) {}
+CoordManip::CoordManip(unsigned x, unsigned y)              : m_point({x, y}) {}
 
 // Opérateurs
 CoordManip  CoordManip::operator +  ()                         const { return CoordManip(+m_point); }
@@ -59,27 +59,27 @@ std::ostream& CoordManip::appliquer(std::ostream& stream) const {
 #endif
 }
 
-math::Point<size_t,2>& CoordManip::point() {
+math::Point<unsigned,2>& CoordManip::point() {
 	return m_point;
 }
 
-math::Point<size_t,2> const& CoordManip::point() const {
+math::Point<unsigned,2> const& CoordManip::point() const {
 	return m_point;
 }
 
-size_t& CoordManip::x() {
+unsigned& CoordManip::x() {
 	return m_point[0];
 }
 
-size_t const& CoordManip::x() const {
+unsigned const& CoordManip::x() const {
 	return m_point[0];
 }
 
-size_t& CoordManip::y() {
+unsigned& CoordManip::y() {
 	return m_point[1];
 }
 
-size_t const& CoordManip::y() const {
+unsigned const& CoordManip::y() const {
 	return m_point[1];
 }
 
