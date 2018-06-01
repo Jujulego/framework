@@ -1,5 +1,9 @@
 // Importations
-#include <dlfcn.h>
+#ifdef __gnu_linux__
+# include <dlfcn.h>
+#else
+# include <windows.h>
+#endif
 
 #include <map>
 #include <string>
@@ -16,8 +20,13 @@ BaseModule* Modules::charger(std::string const& nom) {
 	}
 
 	// Chargement du module
-	void* shared_library = dlopen(nom.c_str(), RTLD_LAZY);
+#ifdef __gnu_linux__
+	void* shared_library = dlopen((nom + ".so").c_str(), RTLD_LAZY);
 	BaseModule* (*loader)() = reinterpret_cast<BaseModule* (*)()>(dlsym(shared_library, "loader"));
+#else
+	HINSTANCE shared_library = LoadLibrary((nom + ".dll").c_str());
+	BaseModule* (*loader)() = reinterpret_cast<BaseModule* (*)()>(GetProcAddress(shared_library, "loader"));
+#endif
 
 	BaseModule* module = loader();
 	m_modules[nom] = module;

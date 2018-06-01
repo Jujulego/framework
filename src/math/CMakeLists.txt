@@ -7,7 +7,6 @@ add_library(math SHARED
 	infini.cpp
 	infini.hpp
 	matrice.hpp
-	meta.hpp
 	nombre.hpp
 	operations.hpp
 	polynome.hpp

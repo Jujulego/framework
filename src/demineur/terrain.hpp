@@ -8,6 +8,7 @@
 #include <random>
 
 #include "math.hpp"
+#include "meta/algo.hpp"
 
 #include "console/chars.hpp"
 #include "console/style.hpp"
@@ -29,7 +30,7 @@ class Terrain {
 		// Constructeur
 		Terrain(unsigned nbMines) {
 			// Initialisation générateur aléatoire
-			std::hash<math::Point<unsigned,2>> hash(math::meta::max<size_t,LIG,COL>::value);
+			std::hash<math::Point<unsigned,2>> hash(meta::max<size_t,LIG,COL>::value);
 			auto generateur = std::bind(std::uniform_int_distribution<int>(0, LIG*COL-1), std::mt19937(std::chrono::system_clock::now().time_since_epoch().count()));
 
 			// Positionnement des mines
@@ -59,7 +60,7 @@ class Terrain {
 			for (unsigned c = 0; c < COL; ++c)
 				stream << console::TAB_DG << console::TAB_DG;
 
-			stream << console::TAB_BG << std::endl;
+			stream << console::TAB_DG << console::TAB_BG << std::endl;
 
 			// Constenu
 			for (unsigned l = 0; l < LIG; ++l) {
@@ -88,24 +89,18 @@ class Terrain {
 						} else {
 							stream << " ";
 						}
-
-						stream << console::style::defaut << " ";
 					} else {
 						if (pt == curseur) {
 							stream << console::style::bleu;
 						}
 
 						stream << console::style::inverse << " ";
-
-						if (c != COL-1) {
-							stream << " " << console::style::defaut;
-						} else {
-							stream << console::style::defaut << " ";
-						}
 					}
+
+					stream << " " << console::style::defaut;
 				}
 
-				stream << console::TAB_HB << std::endl;
+				stream << " " << console::TAB_HB << std::endl;
 			}
 
 			// Ligne inférieure
@@ -113,7 +108,23 @@ class Terrain {
 			for (unsigned c = 0; c < COL; ++c)
 				stream << console::TAB_DG << console::TAB_DG;
 
-			stream << console::TAB_HG << std::endl;
+			stream << console::TAB_DG << console::TAB_HG << std::endl;
+		}
+
+		bool toucher(math::Point<unsigned,2> const& pt) {
+			m_marques[pt] = 1;
+
+			if (m_mines[pt] == 0) {
+				for (auto dir : DIRECTIONS) {
+					auto npt = pt + dir;
+
+					if (RECTANGLE.contient(npt) && m_marques[npt] == 0) {
+						toucher(npt);
+					}
+				}
+			}
+
+			return m_mines[pt] == -1;
 		}
 };
 

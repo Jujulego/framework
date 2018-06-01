@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "coord.hpp"
-#include "meta.hpp"
+#include "meta/algo.hpp"
 
 // Namespace
 namespace math {

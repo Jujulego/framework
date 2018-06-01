@@ -10,7 +10,6 @@
 #include "module.hpp"
 
 #include "math/coord.hpp"
-#include "math/meta.hpp"
 
 #include "console/chars.hpp"
 #include "console/console.hpp"
@@ -29,8 +28,8 @@ class Module : public BaseModule {
 		// Constructeur
 		Module() : m_menu("Demineur") {
 			// Module !
-			m_menu.ajouter("Jouer (10x10)", std::bind(&Module::jouer<10,10,33>, this));
-			m_menu.ajouter("Jouer (10x30)", std::bind(&Module::jouer<10,30,99>, this));
+			m_menu.ajouter("Jouer (10x10)", std::bind(&Module::jouer<10,10,10>, this));
+			m_menu.ajouter("Jouer (10x30)", std::bind(&Module::jouer<10,30,33>, this));
 		}
 
 		// Méthodes
@@ -72,6 +71,10 @@ class Module : public BaseModule {
 
 						break;
 					}
+
+					case console::ENTREE:
+						terrain.toucher(perso);
+						break;
 
 					case 'q':
 					case 'Q':

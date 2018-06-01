@@ -17,4 +17,8 @@ add_executable(run
 	modules.cpp
 )
 
-target_link_libraries(run dl math console)
+target_link_libraries(run math console)
+
+if (UNIX)
+	target_link_libraries(run dl)
+endif()
