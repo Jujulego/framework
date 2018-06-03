@@ -16,19 +16,24 @@
 // Namespaces
 using namespace console;
 
+// BaseMenu
 // Constructeur
-Menu::Menu(std::string const& entete) : Menu(entete, "Quitter") {}
-Menu::Menu(std::string const& entete, std::string const& quitter)
+BaseMenu::BaseMenu(std::string const& entete, std::string const& quitter)
 	: m_entete(asciiart<8>::conv(entete)), m_quitter(quitter) {}
 
-// Méthodes statiques
-void Menu::aff_entete() const {
+// Méthodes
+void BaseMenu::aff_entete() const {
 	asciiart<8>::ostream aas(&std::cout);
 	aas << manip::clear << m_entete << std::endl;
 }
 
+// Menu
+// Constructeur
+Menu::Menu(std::string const& entete, std::string const& quitter)
+	: BaseMenu(entete, quitter) {}
+
 // Méthodes
-void Menu::afficher() const {
+void Menu::afficher() {
 	// Initialisation
 	unsigned item  = 0;
 	bool continuer = true;

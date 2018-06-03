@@ -2,10 +2,7 @@
 
 // Importations
 #include <array>
-#include <chrono>
-#include <functional>
 #include <ostream>
-#include <random>
 
 #include "math.hpp"
 #include "meta/algo.hpp"
@@ -30,12 +27,11 @@ class Terrain {
 		// Constructeur
 		Terrain(unsigned nbMines) {
 			// Initialisation générateur aléatoire
-			std::hash<math::Point<unsigned,2>> hash(meta::max<size_t,LIG,COL>::value);
-			auto generateur = std::bind(std::uniform_int_distribution<int>(0, LIG*COL-1), std::mt19937(std::chrono::system_clock::now().time_since_epoch().count()));
+			auto generateur = math::GenerateurPoints<unsigned,LIG,COL>();
 
 			// Positionnement des mines
 			while (m_nbMines < nbMines) {
-				math::Point<unsigned,2> pt = unhash(hash, generateur());
+				math::Point<unsigned,2> pt = generateur();
 
 				if (RECTANGLE.contient(pt) && m_mines[pt] >= 0) {
 					// Pose de la mine

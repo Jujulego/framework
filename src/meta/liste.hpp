@@ -5,6 +5,7 @@
 
 // Namespace
 namespace meta {
+namespace liste {
 
 // Liste
 template<class V, class L = void>
@@ -75,4 +76,5 @@ struct vpush_front {
 	using type = typename push_front<L,std::integral_constant<typename L::type,V>>::type;
 };
 
+} // liste
 } // meta

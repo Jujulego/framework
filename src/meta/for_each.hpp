@@ -1,25 +1,39 @@
 #pragma once
 
 // Importations
-//#include <type_traits>
+#include <type_traits>
 
 // Namespace
 namespace meta {
 
 // Métaalgorithme ;)
-template<class list, template<class> class fonction, template<class,class> class fusion, bool fin = list::fin>
-struct for_each {
-	// Alias
-	using type = typename fusion<
-		typename for_each<typename list::suivant, fonction, fusion, list::suivant::fin>::type,
-		typename fonction<typename list::valeur>::type
-	>::type;
-};
+namespace liste {
 
-template<class list, template<class> class fonction, template<class,class> class fusion>
-struct for_each<list,fonction,fusion,true> {
-	// Alias
-	using type = typename fonction<typename list::valeur>::type;
-};
+template<template<class> class fonction, template<class,class> class fusion, class list, bool fin = list::fin>
+struct for_each : fusion<
+	typename fonction<typename list::valeur>::type,
+	typename for_each<fonction, fusion, typename list::suivant, list::suivant::fin>::type
+> {};
 
+template<template<class> class fonction, template<class,class> class fusion, class list>
+struct for_each<fonction,fusion,list,true> : fonction<
+	typename list::valeur
+> {};
+
+} // liste
+
+namespace tableau {
+
+template<template<class> class fonction, template<class,class> class fusion, class I, I v, I... vals>
+struct for_each : fusion<
+	typename fonction<std::integral_constant<I, v>>::type,
+	typename for_each<fonction, fusion, I, vals...>::type
+> {};
+
+template<template<class> class fonction, template<class,class> class fusion, class I, I v>
+struct for_each<fonction,fusion,I,v> : fonction<
+	std::integral_constant<I,v>
+> {};
+
+} // tableau
 } // meta

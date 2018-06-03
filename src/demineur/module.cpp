@@ -85,7 +85,7 @@ class Module : public BaseModule {
 		}
 
 		// - accesseur
-		virtual console::Menu const& get_menu() const override {
+		virtual console::Menu& get_menu() override {
 			return m_menu;
 		}
 };

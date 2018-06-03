@@ -1,38 +1,37 @@
+
 // Importations
 #include <functional>
 #include <iostream>
+#include <string>
 
 #include "console.hpp"
 #include "modules.hpp"
 
-#include "meta.hpp"
-
-// Tests
-using liste = meta::vpush_front<meta::vliste<size_t,1,2,3>,4>::type;
-static_assert(meta::taille<liste>::value == 4, "Booum !");
-
-template<class V>
-struct identite {
-	// Alias
-	using type = V;
-};
-
-static_assert(meta::for_each<liste,identite,meta::add_>::type::value == 10, "Cool !");
-
 // Fonctions
-void charger_demineur(Modules& modules) {
+void charger_module(Modules& modules, std::string const& nom) {
 	std::cout << std::endl;
 
-	BaseModule* module = modules.charger("demineur");
+	BaseModule* module = modules.charger(nom);
 	module->get_menu().afficher();
+}
+
+// Lister les modules
+void menu_modules(Modules& modules) {
+	// Initialisation menu
 }
 
 // Main
 int main() {
-	Modules modules;
+/*	Modules modules;
 
 	console::Menu menu("Framework");
-	menu.ajouter("Démineur", std::bind(&charger_demineur, modules));
+	menu.ajouter("Démineur", std::bind(&charger_module, modules, "demineur"));
+	menu.afficher();*/
+
+	console::MenuChoix<int> menu("Framework");
+	for (int i = 0; i < 40; ++i) {
+		menu.ajouter("n°" + std::to_string(i), i);
+	}
 	menu.afficher();
 
 	return 0;

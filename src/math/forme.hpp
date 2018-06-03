@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cmath>
 
+#include "constantes.hpp"
 #include "coord.hpp"
 
 // Namespace
@@ -50,6 +51,19 @@ class DeuxPoints : public Forme<Int,DEG> {
 
 			return true;
 		}
+
+		// - accesseurs
+		Vecteur<Int,DEG> vecteur() const {
+			return m_pt2 - m_pt1;
+		}
+
+		Point<Int,DEG> const& pt1() const {
+			return m_pt1;
+		}
+
+		Point<Int,DEG> const& pt2() const {
+			return m_pt2;
+		}
 };
 
 template<class Int>
@@ -63,11 +77,11 @@ class Rectangle : public DeuxPoints<Int,2> {
 
 		// Méthodes bonus ;)
 		Int tx() const {
-			return std::abs((DeuxPoints<Int,2>::m_pt1 - DeuxPoints<Int,2>::m_pt2)[0]);
+			return std::abs(DeuxPoints<Int,2>::vecteur()[0]);
 		}
 
 		Int ty() const {
-			return std::abs((DeuxPoints<Int,2>::m_pt1 - DeuxPoints<Int,2>::m_pt2)[1]);
+			return std::abs(DeuxPoints<Int,2>::vecteur()[1]);
 		}
 
 		Int perimetre() const {
@@ -89,15 +103,15 @@ class PaveDroit : public DeuxPoints<Int,3> {
 
 		// Méthodes bonus ;)
 		Int tx() const {
-			return std::abs((DeuxPoints<Int,3>::m_pt1 - DeuxPoints<Int,3>::m_pt2)[0]);
+			return std::abs(DeuxPoints<Int,3>::vecteur()[0]);
 		}
 
 		Int ty() const {
-			return std::abs((DeuxPoints<Int,3>::m_pt1 - DeuxPoints<Int,3>::m_pt2)[1]);
+			return std::abs(DeuxPoints<Int,3>::vecteur()[1]);
 		}
 
 		Int tz() const {
-			return std::abs((DeuxPoints<Int,3>::m_pt1 - DeuxPoints<Int,3>::m_pt2)[2]);
+			return std::abs(DeuxPoints<Int,3>::vecteur()[2]);
 		}
 
 		Int surface() const {
@@ -106,6 +120,102 @@ class PaveDroit : public DeuxPoints<Int,3> {
 
 		Int volume() const {
 			return tx() * ty() * tz();
+		}
+};
+
+template<class Int, size_t DEG>
+class PointRayon : public Forme<Int,DEG> {
+	protected:
+		// Attributs
+		Point<Int,DEG> m_centre;
+		Int m_rayon;
+
+	public:
+		// Constructeur
+		PointRayon(Int const& rayon) : m_rayon(rayon) {}
+		PointRayon(Point<Int,DEG> const& centre, Int const& rayon) : m_centre(m_centre), m_rayon(rayon) {}
+
+		// Méthodes
+		virtual bool contient(Point<Int,DEG> const& pt) const override {
+			auto v = pt - centre;
+			Int somme = 0;
+
+			for (size_t i = 0; i < DEG; ++i) {
+				somme += v[i] * v[i];
+			}
+
+			return somme <= (rayon * rayon);
+		}
+
+		// - accesseurs
+		Point<Int,DEG> const& centre() const {
+			return m_centre;
+		}
+
+		Int const& rayon() const {
+			return m_rayon;
+		}
+};
+
+template<class Int>
+class Disque : public PointRayon<Int,2> {
+	public:
+		// Constructeur
+		Disque(Int const& rayon) : PointRayon<Int,2>(rayon) {}
+		Disque(Point<Int,2> const& centre, Int const& rayon) : PointRayon<Int,2>(centre, rayon) {}
+
+		// Méthodes
+		auto perimetre() const {
+			return 2 * PI * PointRayon<Int,2>::m_rayon;
+		}
+
+		auto aire() const {
+			return PI * PointRayon<Int,2>::m_rayon * PointRayon<Int,2>::m_rayon;
+		}
+};
+
+template<class Int>
+class Cercle : public Disque<Int> {
+	public:
+		// Constructeur
+		Cercle(Int const& rayon) : Disque<Int>(rayon) {}
+		Cercle(Point<Int,2> const& centre, Int const& rayon) : Disque<Int>(centre, rayon) {}
+
+		// Méthodes
+		virtual bool contient(Point<Int,2> const& pt) const override {
+			auto v = pt - Disque<Int>::m_centre;
+			return (v[0] * v[0] + v[1] * v[1]) == (Disque<Int>::m_rayon * Disque<Int>::m_rayon);
+		}
+};
+
+template<class Int>
+class Boule : public PointRayon<Int,3> {
+	public:
+		// Constructeur
+		Boule(Int const& rayon) : PointRayon<Int,3>(rayon) {}
+		Boule(Point<Int,3> const& centre, Int const& rayon) : PointRayon<Int,3>(centre, rayon) {}
+
+		// Méthodes
+		auto surface() const {
+			return 4 * PI * PointRayon<Int,3>::m_rayon * PointRayon<Int,3>::m_rayon;
+		}
+
+		auto volume() const {
+			return 4/3 * PI * PointRayon<Int,3>::m_rayon * PointRayon<Int,3>::m_rayon * PointRayon<Int,3>::m_rayon;
+		}
+};
+
+template<class Int>
+class Sphere : public Boule<Int> {
+	public:
+		// Constructeur
+		Sphere(Int const& rayon) : Boule<Int>(rayon) {}
+		Sphere(Point<Int,3> const& centre, Int const& rayon) : Boule<Int>(centre, rayon) {}
+
+		// Méthodes
+		virtual bool contient(Point<Int,3> const& pt) const override {
+			auto v = pt - Boule<Int>::m_centre;
+			return (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]) == (Boule<Int>::m_rayon * Boule<Int>::m_rayon);
 		}
 };
 

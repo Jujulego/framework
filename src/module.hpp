@@ -10,7 +10,7 @@ class BaseModule {
 		virtual ~BaseModule() = default;
 
 		// Méthodes
-		virtual console::Menu const& get_menu() const = 0;
+		virtual console::Menu& get_menu() = 0;
 };
 
 // Macro

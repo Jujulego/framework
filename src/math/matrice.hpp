@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "coord.hpp"
-#include "meta/algo.hpp"
+#include "meta.hpp"
 
 // Namespace
 namespace math {
@@ -269,12 +269,12 @@ class Matrice {                                   // Matrice<Int,0,0> => matrice
 		};
 
 		// Constructeur
-		Matrice() : hash(meta::max<size_t,LIG,COL>::value) {
+		Matrice() : hash(meta::max<meta::size_<LIG>,meta::size_<COL>>::type::value) {
 			for (unsigned i = 0; i < LIG*COL; ++i) {
 				m_matrice[i] = 0;
 			}
 		}
-		Matrice(std::array<Int,LIG * COL> const& matrice) : hash(meta::max<size_t,LIG,COL>::value), m_matrice(matrice) {}
+		Matrice(std::array<Int,LIG * COL> const& matrice) : hash(meta::max<meta::size_<LIG>,meta::size_<COL>>::type::value), m_matrice(matrice) {}
 
 		// Opérateurs
 		// - accès élément
