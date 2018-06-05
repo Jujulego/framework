@@ -59,6 +59,7 @@ class MenuChoix : public BaseMenu {
 		// Attributs
 		size_t m_largmax;
 		unsigned m_choix;
+		bool m_valide = false;
 		std::vector<std::tuple<std::string,VAL>> m_propositions;
 
 	public:
@@ -70,61 +71,69 @@ class MenuChoix : public BaseMenu {
 		virtual void afficher() override {
 			// Initialisation
 			bool continuer = true;
-			unsigned page = 0;
-			math::Point<unsigned,2> pos;
+			m_valide = false;
 
 		refresh:
 			// Préparation pagination
-			math::Rectangle<size_t> terminal(m_entete.screen_size(), taille_terminal().ty());
+			math::Rectangle<size_t> terminal(m_entete.screen_size(), 20);//taille_terminal().ty());
 			math::Rectangle<size_t> espace(
 				math::Point<size_t,2>({5, 10}),
 				terminal.vecteur() - math::Vecteur<size_t,2>({10, 15})
 			);
 
 			size_t nbcol  = espace.tx() / (m_largmax + 2);
-			size_t nbitem = std::min(nbcol * espace.ty(), m_propositions.size());
+			unsigned page = 0;
+
+			std::vector<size_t> debuts_pages;
+			size_t deb = 0;
+
+			do {
+				debuts_pages.push_back(deb);
+			} while ((deb += nbcol * espace.ty()) < m_propositions.size());
+
+			size_t nbpage = debuts_pages.size() -1;
+
+		chgpage:
+			// Préparation affichage
+			math::Point<unsigned,2> pos;
+			size_t nbitem = std::min(nbcol * espace.ty(), m_propositions.size() - debuts_pages[page]);
 			size_t nblig  = nbitem / nbcol;
 			size_t nbderlig = nbitem - nblig * nbcol;
-			size_t nbpage = (m_propositions.size() / nbitem) + 1;
-			page = 0;
-
-			std::cout << terminal.ty() << std::endl;
-			std::cout << m_propositions.size() << " " << nbitem << " " << nbpage << " " << nblig << std::endl;
 
 			CoordManip base(5 + (espace.tx() - nbcol * (m_largmax + 2)) / 2, 10);
-			CoordManip fin (0, nblig + 13);
+			CoordManip fin (0, nblig + 14);
 
 			const auto aff = [&] (unsigned c, unsigned l) -> void {
 				std::cout << base + manip::mouv(c * (m_largmax + 2), l);
 				std::string texte;
 
-				if (pos[0] == c && pos[1] == l) {
-					std::cout << style::inverse;
-				}
-
 				if (l > nblig) {
-					std::cout << (c * espace.tx() / 4) * manip::dx;
+					std::cout << manip::mouv(c * espace.tx() / 4, (nbderlig == 0 ? 1 : 2));
 
 					switch (c) {
 					case 0:
-						if (page == 0) return;
-						std::cout << -3 * manip::dx;
+						if (nbpage == 0 || page == 0) return;
+						std::cout << +3 * manip::dx;
 						texte = "<< Prev";
 						break;
 
 					case 1:
 						texte = m_quitter;
-						std::cout << -(m_quitter.size() / 2) * manip::dx << style::rouge;
+						std::cout << (1 - (m_quitter.size() / 2)) * manip::dx << style::rouge;
 						break;
 
 					case 2:
-						if (page == nbpage-1) return;
+						if (nbpage == 0 || page == nbpage) return;
 						std::cout << -4 * manip::dx;
 						texte = "Suiv >>";
 						break;
 					}
 				} else {
-					texte = std::get<0>(m_propositions[c + l * nbcol]);
+					texte = std::get<0>(m_propositions[c + l * nbcol + page * nbcol * espace.ty()]);
+				}
+
+				if (pos[0] == c && pos[1] == l) {
+					std::cout << style::inverse;
 				}
 
 				std::cout << " " << texte << " " << style::defaut;
@@ -145,21 +154,47 @@ class MenuChoix : public BaseMenu {
 			}
 
 			for (unsigned c = 0; c < 3; ++c) {
-				aff(c, nblig + (nbderlig == 0 ? 1 : 2));
+				aff(c, nblig + 1);
 			}
 
 			while (continuer) {
-				std::cout << fin;
+				std::cout << fin << pos;
 
 				// Entrée !!!
 				switch (getch()) {
-					case FL_BAS:
-						if (pos[1] < (nbderlig == 0 ? nblig-1 : nblig)) {
+					case FL_BAS: {
+						size_t lim = (nbderlig == 0 ? nblig : nblig+1);
+
+						if (pos[1] < lim) {
 							auto opos = pos;
 							pos += math::Vecteur<int,2>({0, 1});
 
+							if (pos[1] == nblig && nbderlig == 0) {
+								pos[1] = nblig + 1;
+							}
+
 							if (pos[1] == nblig && pos[0] >= nbderlig) {
 								pos[0] = nbderlig-1;
+							} else if (pos[1] == nblig+1) {
+								pos[0] = 1;
+							}
+
+							aff(pos[0], pos[1]);
+							aff(opos[0], opos[1]);
+						} else {
+							std::cout << manip::buzz;
+						}
+
+						break;
+					}
+
+					case FL_HAUT:
+						if (pos[1] > 0) {
+							auto opos = pos;
+							pos += math::Vecteur<int,2>({0, -1});
+
+							if (pos[1] == nblig && nbderlig == 0) {
+								pos[1] = nblig - 1;
 							}
 
 							aff(pos[0], pos[1]);
@@ -170,21 +205,20 @@ class MenuChoix : public BaseMenu {
 
 						break;
 
-					case FL_HAUT:
-						if (pos[1] > 0) {
-							auto opos = pos;
-							pos += math::Vecteur<int,2>({0, -1});
+					case FL_DROITE: {
+						size_t lim = nbcol -1;
 
-							aff(pos[0], pos[1]);
-							aff(opos[0], opos[1]);
-						} else {
-							std::cout << manip::buzz;
+						if (pos[1] == nblig) {
+							lim = nbderlig -1;
+						} else if (pos[1] == nblig + 1) {
+							if (nbpage == 0 || page == nbpage) {
+								lim = 1;
+							} else {
+								lim = 2;
+							}
 						}
 
-						break;
-
-					case FL_DROITE:
-						if (pos[0] < (pos[1] == nblig ? nbderlig : nbcol) -1) {
+						if (pos[0] < lim) {
 							auto opos = pos;
 							pos += math::Vecteur<int,2>({1, 0});
 
@@ -195,9 +229,10 @@ class MenuChoix : public BaseMenu {
 						}
 
 						break;
+					}
 
 					case FL_GAUCHE:
-						if (pos[0] > 0) {
+						if (pos[0] > (pos[1] == nblig + 1 && page == 0 ? 1 : 0)) {
 							auto opos = pos;
 							pos += math::Vecteur<int,2>({-1, 0});
 
@@ -205,6 +240,32 @@ class MenuChoix : public BaseMenu {
 							aff(opos[0], opos[1]);
 						} else {
 							std::cout << manip::buzz;
+						}
+
+						break;
+
+					case ENTREE:
+						if (pos[1] <= nblig) {
+							// Un choix a été fait !!!
+							m_choix = pos[0] + pos[1] * nbcol + page * nbcol * espace.ty();
+							m_valide = true;
+
+							continuer = false;
+
+						} else {
+							switch (pos[0]) {
+							case 0: // Prec
+								page--;
+								goto chgpage;
+
+							case 1: // Quitter
+								continuer = false;
+								break;
+
+							case 2: // Suiv
+								page++;
+								goto chgpage;
+							}
 						}
 
 						break;
@@ -256,6 +317,10 @@ class MenuChoix : public BaseMenu {
 			}
 
 			return ov;
+		}
+
+		bool choix_valide() const {
+			return m_valide;
 		}
 
 		VAL recup_choix() const {

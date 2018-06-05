@@ -29,10 +29,16 @@ int main() {
 	menu.afficher();*/
 
 	console::MenuChoix<int> menu("Framework");
-	for (int i = 0; i < 40; ++i) {
+	for (int i = 0; i < 100; ++i) {
 		menu.ajouter("n°" + std::to_string(i), i);
 	}
 	menu.afficher();
+
+	if (menu.choix_valide()) {
+		std::cout << menu.recup_choix() << std::endl;
+	} else {
+		std::cout << ":(" << std::endl;
+	}
 
 	return 0;
 }
