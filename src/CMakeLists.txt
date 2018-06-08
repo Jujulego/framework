@@ -5,6 +5,7 @@ add_subdirectory(math)
 add_subdirectory(console)
 
 add_subdirectory(demineur)
+add_subdirectory(othello)
 
 #
 # Executable run

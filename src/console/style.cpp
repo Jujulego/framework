@@ -23,33 +23,33 @@ static std::mutex mtx_style;
 std::ostream& Style::appliquer(std::ostream& stream) const {
 	// Verrouillage
 	std::unique_lock<std::mutex> lck(mtx_style);
-	
+
 	// Sauvegarde des drapeaux
 	auto flags = stream.flags();
-	
+
 #ifdef __gnu_linux__
 	// Application du style ! (version Linux)
 	if (m_effet == NORMAL) stream << "\x1b[m";
-	
+
 	stream << std::noshowbase << std::hex << "\x1b[";
-	
+
 	bool ptvirg = false;
 	if (m_effet != NORMAL) {
 		stream << m_effet;
 		ptvirg = true;
 	}
-	
+
 	if (m_fnd != ACTUELLE) {
 		if (ptvirg) stream << ';';
 		stream << (m_fnd | FOND);
 		ptvirg = true;
 	}
-	
+
 	if (m_txt != ACTUELLE) {
 		if (ptvirg) stream << ';';
 		stream << (m_txt | TEXTE);
 	}
-	
+
 	stream << "m";
 	stream.flush();
 #else

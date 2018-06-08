@@ -75,7 +75,7 @@ class MenuChoix : public BaseMenu {
 
 		refresh:
 			// Préparation pagination
-			math::Rectangle<size_t> terminal(m_entete.screen_size(), 20);//taille_terminal().ty());
+			math::Rectangle<size_t> terminal(m_entete.screen_size(), taille_terminal().ty());
 			math::Rectangle<size_t> espace(
 				math::Point<size_t,2>({5, 10}),
 				terminal.vecteur() - math::Vecteur<size_t,2>({10, 15})
@@ -158,7 +158,7 @@ class MenuChoix : public BaseMenu {
 			}
 
 			while (continuer) {
-				std::cout << fin << pos;
+				std::cout << fin;
 
 				// Entrée !!!
 				switch (getch()) {
@@ -193,8 +193,12 @@ class MenuChoix : public BaseMenu {
 							auto opos = pos;
 							pos += math::Vecteur<int,2>({0, -1});
 
-							if (pos[1] == nblig && nbderlig == 0) {
-								pos[1] = nblig - 1;
+							if (pos[1] == nblig) {
+								if (nbderlig == 0) {
+									pos[1] = nblig - 1;
+								} else if (pos[0] >= nbderlig) {
+									pos[0] = nbderlig-1;
+								}
 							}
 
 							aff(pos[0], pos[1]);

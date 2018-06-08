@@ -18,27 +18,23 @@ void charger_module(Modules& modules, std::string const& nom) {
 // Lister les modules
 void menu_modules(Modules& modules) {
 	// Initialisation menu
+	console::MenuChoix<std::string> menu("Framework");
+	menu.ajouter("Démineur", "demineur");
+	menu.ajouter("Othello", "othello");
+	menu.afficher();
+
+	if (menu.choix_valide()) {
+		charger_module(modules, menu.recup_choix());
+	}
 }
 
 // Main
 int main() {
-/*	Modules modules;
+	Modules modules;
 
 	console::Menu menu("Framework");
-	menu.ajouter("Démineur", std::bind(&charger_module, modules, "demineur"));
-	menu.afficher();*/
-
-	console::MenuChoix<int> menu("Framework");
-	for (int i = 0; i < 100; ++i) {
-		menu.ajouter("n°" + std::to_string(i), i);
-	}
+	menu.ajouter("Charger module", std::bind(&menu_modules, modules));
 	menu.afficher();
-
-	if (menu.choix_valide()) {
-		std::cout << menu.recup_choix() << std::endl;
-	} else {
-		std::cout << ":(" << std::endl;
-	}
 
 	return 0;
 }

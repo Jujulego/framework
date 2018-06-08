@@ -26,6 +26,7 @@ class asciiart_char {
 		char m_char = '\0';
 
 		int m_decalx = 0;
+		bool m_ronde = false;
 		std::array<std::string,LIG> m_asciiart;
 
 	public:
@@ -34,11 +35,10 @@ class asciiart_char {
 			m_asciiart.fill("");
 		}
 
-		asciiart_char(char c, std::array<std::string,LIG> const& asciiart) : asciiart_char(c, 0, asciiart) {
-		}
-
-		asciiart_char(char c, int decalx, std::array<std::string,LIG> const& asciiart) : m_char(c), m_decalx(decalx), m_asciiart(asciiart) {
-		}
+		asciiart_char(char c, std::array<std::string,LIG> const& asciiart) : asciiart_char(c, 0, false, asciiart) {}
+		asciiart_char(char c, bool ronde, std::array<std::string,LIG> const& asciiart) : asciiart_char(c, 0, ronde, asciiart) {}
+		asciiart_char(char c, int decalx, std::array<std::string,LIG> const& asciiart) : asciiart_char(c, decalx, false, asciiart) {}
+		asciiart_char(char c, int decalx, bool ronde, std::array<std::string,LIG> const& asciiart) : m_char(c), m_decalx(decalx), m_ronde(ronde), m_asciiart(asciiart) {}
 
 		// Opérateurs
 		// - comparaison
@@ -78,6 +78,10 @@ class asciiart_char {
 
 		int decalx() const {
 			return m_decalx;
+		}
+
+		bool ronde() const {
+			return m_ronde;
 		}
 
 		std::array<std::string,LIG> const& asciiart() const {
@@ -308,7 +312,7 @@ class asciiart_string {
 			for (size_t i = 0; i < m_chaine.size(); ++i) {
 				t += m_chaine[i].screen_size()+1;
 
-				if (i != 0) t += m_chaine[i].decalx();
+				if (i != 0 && m_chaine[i-1].ronde()) t += m_chaine[i].decalx();
 			}
 
 			return t;
@@ -712,6 +716,7 @@ class asciiart_stream {
 	private:
 		// Attribut
 		Stream* m_flux;
+		bool prev_ronde = false;
 
 	public:
 		// Constructeur
@@ -719,7 +724,7 @@ class asciiart_stream {
 
 		// Opérateurs
 		asciiart_stream& operator << (asciiart_char<LIG> const& c) {
-			*m_flux << manip::mouv(c.decalx(), 0);
+			*m_flux << manip::mouv(prev_ronde ? c.decalx() : 0, 0);
 			*m_flux << manip::sauve;
 
 			for (unsigned i = 0; i < LIG; ++i) {
@@ -741,6 +746,7 @@ class asciiart_stream {
 				}
 			}
 
+			prev_ronde = c.ronde();
 			return *this;
 		}
 
@@ -756,6 +762,7 @@ class asciiart_stream {
 		asciiart_stream& operator << (Stream& (*manip)(Stream&)) {
 			if (manip == (Stream& (*)(Stream&)) std::endl) {
 				*m_flux << std::endl << manip::mouv(0, LIG);
+				prev_ronde = false;
 			}
 
 			return *this;
@@ -763,6 +770,7 @@ class asciiart_stream {
 
 		asciiart_stream& operator << (EffLigneManip const& eff) {
 			*m_flux << manip::sauve;
+			prev_ronde = false;
 
 			for (unsigned i = 0; i < LIG; ++i) {
 				*m_flux << eff << std::endl;
@@ -774,17 +782,20 @@ class asciiart_stream {
 
 		asciiart_stream& operator << (CoordManip const& cm) {
 			*m_flux << manip::coord(cm.x(), LIG*cm.y());
+			prev_ronde = false;
 			return *this;
 		}
 
 		asciiart_stream& operator << (MouvManip const& mm) {
 			*m_flux << manip::mouv(mm.dx(), LIG*mm.dy());
+			prev_ronde = false;
 			return *this;
 		}
 
 		template<class MANIP>
 		typename std::enable_if<std::is_base_of<BaseManip,MANIP>::value,asciiart_stream&>::type operator << (MANIP const& m) {
 			*m_flux << m;
+			prev_ronde = false;
 			return *this;
 		}
 
@@ -799,6 +810,7 @@ class asciiart_stream<LIG,posstream<Stream>> {
 	private:
 		// Attribut
 		posstream<Stream> m_flux;
+		bool prev_ronde = false;
 
 	public:
 		// Constructeur
@@ -829,6 +841,7 @@ class asciiart_stream<LIG,posstream<Stream>> {
 				}
 			}
 
+			prev_ronde = c.ronde();
 			return *this;
 		}
 
@@ -844,6 +857,7 @@ class asciiart_stream<LIG,posstream<Stream>> {
 		asciiart_stream& operator << (Stream& (*manip)(Stream&)) {
 			if (manip == (Stream& (*)(Stream&)) std::endl) {
 				m_flux << std::endl << manip::mouv(0, LIG);
+				prev_ronde = false;
 			}
 
 			return *this;
@@ -857,22 +871,30 @@ class asciiart_stream<LIG,posstream<Stream>> {
 			}
 
 			m_flux << manip::restore;
+
+			prev_ronde = false;
 			return *this;
 		}
 
 		asciiart_stream& operator << (CoordManip const& cm) {
 			m_flux << manip::coord(cm.x(), LIG*cm.y());
+
+			prev_ronde = false;
 			return *this;
 		}
 
 		asciiart_stream& operator << (MouvManip const& mm) {
 			m_flux << manip::mouv(mm.dx(), LIG*mm.dy());
+
+			prev_ronde = false;
 			return *this;
 		}
 
 		template<class MANIP>
 		typename std::enable_if<std::is_base_of<BaseManip,MANIP>::value,asciiart_stream&>::type operator << (MANIP const& m) {
 			m_flux << m;
+
+			prev_ronde = false;
 			return *this;
 		}
 
